@@ -7,7 +7,7 @@ export class LandmarkController {
 
   @Post('create')
   async createFromCSV(@Body('name') name: string) {
-    const result = await this.landmarkService.createLandmark(name);
+    const result = await this.landmarkService.updateImagePath(name);
     return result;
   }
 
@@ -16,9 +16,4 @@ export class LandmarkController {
     return this.landmarkService.getLandmarkByName(name);
   }
 
-  // @Get(':name')
-  // async getLandmark(@Param('name') name: string) {
-  //   return this.landmarkService.getLandmarkByName(name);
-  // }
-  
 }
