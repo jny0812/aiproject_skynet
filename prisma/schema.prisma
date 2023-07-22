@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "./"
 }
 
 datasource db {
@@ -13,17 +12,18 @@ datasource db {
 
 model Area {
   id Int @id @default(autoincrement()) @map("area_id")
-  siDo String @unique
-  siGu String @unique
+  siDo String 
+  siGu String 
   Landmark Landmark[]
 }
 
 
 model Landmark {
   id Int @id @default(autoincrement()) @map("landmark_id")
-  name String @unique @map("landmark_name")
-  address String
+  name String @unique @map("landmark_name")@db.VarChar(255)
+  address String @db.VarChar(255)
   imagePath String @map("image_path")
-  areaId Int
-  Area Area @relation(fields: [areaId], references: [id])
+  fileName String @map("file_name")
+  areaId Int @map("area_id")
+  area Area @relation(fields: [areaId], references: [id])
 }
