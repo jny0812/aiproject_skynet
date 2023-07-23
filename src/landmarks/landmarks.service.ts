@@ -6,7 +6,7 @@ import { LandmarkRepository } from './landmarks.repository';
 export class LandmarkService {
   constructor(private landmarkRepo: LandmarkRepository) {}
 
-  async updateImagePath(name: string) {
+  async updateImagePath(name: string): Promise<Landmark> {
     return this.landmarkRepo.updateImagePath(name);
   }
 
@@ -18,5 +18,10 @@ export class LandmarkService {
     }
   
     return landmark;
+  }
+
+  async getAllLandmarks(): Promise<Landmark[]> {
+    const landmarks = await this.landmarkRepo.findMany();
+    return landmarks;
   }
 }
