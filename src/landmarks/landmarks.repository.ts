@@ -2,6 +2,7 @@ import { PrismaService } from 'src/prisma.service';
 import { Landmark } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import { join } from 'path';
+import { GetLandmarkDto } from './dto/landmark.request.dto';
 
 @Injectable()
 export class LandmarkRepository {
@@ -10,8 +11,8 @@ export class LandmarkRepository {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async updateImagePath(name: string): Promise<Landmark> {
-    let landmarkData = await this.prisma.landmark.findFirst({where: {name: name}})
+  async updateImagePath(getlandmarkDto: GetLandmarkDto): Promise<Landmark> {
+    let landmarkData = await this.prisma.landmark.findFirst({where: getlandmarkDto})
 
     if (!landmarkData) {
       throw new Error('Landmark not found in CSV');
@@ -25,14 +26,6 @@ export class LandmarkRepository {
     });
 
     return landmarkData;
-  }
-
-  async findByName(name: string): Promise<Landmark> {
-    return this.prisma.landmark.findUnique({
-      where: {
-        name: name,
-      },
-    });
   }
 
   async findMany(): Promise<Landmark[]> {
