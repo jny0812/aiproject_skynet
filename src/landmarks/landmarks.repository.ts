@@ -34,4 +34,8 @@ export class LandmarkRepository {
       },
     });
   }
+
+  async findMany(): Promise<Landmark[]> {
+    return this.prisma.landmark.findMany();
+  }
 }
