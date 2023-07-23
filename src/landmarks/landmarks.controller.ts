@@ -10,22 +10,23 @@ import { LandmarkResponseDto } from './dto/landmark.response.dto';
 export class LandmarkController {
   constructor(private readonly landmarkService: LandmarkService) {}
 
-  @Post('create')
-  @ApiBody({ type: CreateLandmarkDto })
-  @ApiOperation({ summary: 'Create a new landmark' })
-  @ApiResponse({ status: 201, description: 'The landmark has been successfully created.', type: LandmarkResponseDto })
-  async createFromCSV(@Body() createLandmarkDto: CreateLandmarkDto ) : Promise<Landmark> {
-    const {name} = createLandmarkDto;
-    return await this.landmarkService.updateImagePath(name);
-  }
-
   @Get(':name')
   @ApiParam({ name: 'name', required: true, description: 'The name of the landmark' })
   @ApiOperation({ summary: 'Get a landmark by name' })
   @ApiResponse({ status: 200, description: 'The landmark details', type: LandmarkResponseDto })
-  async getLandmark(@Param() getLandmarkDto: GetLandmarkDto) : Promise<Landmark> {
-    const { name } = getLandmarkDto;
-    return this.landmarkService.getLandmarkByName(name);
+  async getLandmark(@Param() getLandmarkDto: GetLandmarkDto) {
+
+    const landmark = await this.landmarkService.updateImagePath(getLandmarkDto);
+
+    const { name, address, imagePath } = landmark;
+
+    return {
+      name,
+      address,
+      imagePath
+    };
+
+    
   }
 
   @Get()

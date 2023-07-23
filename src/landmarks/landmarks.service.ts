@@ -1,23 +1,17 @@
 import { Landmark, Area } from '@prisma/client';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { LandmarkRepository } from './landmarks.repository';
+import { CreateLandmarkDto, GetLandmarkDto } from './dto/landmark.request.dto';
 
 @Injectable()
 export class LandmarkService {
   constructor(private landmarkRepo: LandmarkRepository) {}
 
-  async updateImagePath(name: string): Promise<Landmark> {
-    return this.landmarkRepo.updateImagePath(name);
-  }
+  async updateImagePath(getLandmarkDto: GetLandmarkDto): Promise<Landmark> {
+    const landmark = await this.landmarkRepo.updateImagePath(getLandmarkDto);
 
-  async getLandmarkByName(name: string): Promise<Landmark> {
-    const landmark = await this.landmarkRepo.findByName(name);
-  
-    if (!landmark) {
-      throw new NotFoundException(`Landmark with name ${name} not found.`);
-    }
-  
     return landmark;
+
   }
 
   async getAllLandmarks(): Promise<Landmark[]> {
