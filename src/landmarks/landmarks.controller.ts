@@ -6,6 +6,7 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import LandmarkResponse from 'src/docs/contents.swagger';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 import { ApiFile } from 'src/common/decorators/apiFile.decorator';
+import { LandmarkResponseDto } from './dto/landmark.response.dto';
 
 @ApiTags('landmark')
 @Controller('landmark')
@@ -39,16 +40,15 @@ export class LandmarkController {
   @ApiOperation({ summary: 'Get a landmark by name' })
   @ApiResponse(LandmarkResponse)
   async getLandmark(@Param() getLandmarkDto: GetLandmarkDto): 
-    Promise<{ name:string, address:string, imagePath:string, nearByLandmarks: {name:string, address:string, imagePath:string}[] }> {
+    Promise<{ landmark: LandmarkResponseDto, nearByLandmarks: LandmarkResponseDto[] }> {
 
     //해당 랜드마크 정보 추출
-    const landmark = await this.landmarkService.getLandmarkByName(getLandmarkDto)
-    const { name, address, imagePath } = landmark;
+    const landmark : LandmarkResponseDto = await this.landmarkService.getLandmarkByName(getLandmarkDto)
 
     //근처 랜드마크 리스트 추출
     const nearByLandmarks =  await this.landmarkService.getNearByLandmarksByArea(landmark.areaId);
     
 
-    return { name, address, imagePath, nearByLandmarks}
+    return { landmark, nearByLandmarks}
   }
 }

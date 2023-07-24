@@ -5,6 +5,7 @@ import { GetLandmarkDto } from './dto/landmark.request.dto';
 import { S3Service } from 'src/common/s3/s3.service';
 import { LandmarkResponseDto } from './dto/landmark.response.dto';
 import { getImagePath } from 'src/common/utils/s3.utils';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class LandmarkService {
@@ -25,7 +26,7 @@ export class LandmarkService {
 
 
   //해당 랜드마크 정보 추출 (이름으로 검색)
-  async getLandmarkByName(getLandmarkDto: GetLandmarkDto): Promise<Landmark> {
+  async getLandmarkByName(getLandmarkDto: GetLandmarkDto): Promise<LandmarkResponseDto> {
     let landmark = await this.landmarkRepo.findLandmarkByName(getLandmarkDto);
     if (!landmark) {
       throw new Error('Landmark not found');
@@ -34,29 +35,27 @@ export class LandmarkService {
     const imagePath = getImagePath(landmark.imagePath);
     landmark.imagePath = imagePath;
 
+    landmark = plainToClass(LandmarkResponseDto, landmark);
+
     return landmark
   }
 
   //주변 랜드마크 정보 추출 (지역ID로 검색 - 상위 5개)
-  async getNearByLandmarksByArea(areaId: number): Promise<{name:string, address:string, imagePath:string}[]> {
+  async getNearByLandmarksByArea(areaId: number): Promise<LandmarkResponseDto[]> {
     
     const landmarks = await this.landmarkRepo.getNearByLandmarksByAreaId(areaId);
     if (!landmarks) {
       throw new Error('Landmark not found');
     }
 
-    //파일명 이름으로 이미지 경로 업데이트
+    //파일명 이름으로이미지 경로 업데이트
     const updatedLandmarks = landmarks.map((landmark) => ({
       ...landmark,
       imagePath: getImagePath(landmark.imagePath),
     }));
 
     //할당
-    const nearByLandmarks = updatedLandmarks.map(({ name, address, imagePath }) => ({
-      name,
-      address,
-      imagePath,
-    }));
+    const nearByLandmarks = updatedLandmarks.map(landmark => plainToClass(LandmarkResponseDto, landmark));
   
     return nearByLandmarks;
   }
