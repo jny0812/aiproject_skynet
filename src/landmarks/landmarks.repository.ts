@@ -27,6 +27,7 @@ export class LandmarkRepository {
       throw new Error('Landmark not found in CSV');
     }
     
+    // 로컬 이미지 경로로 update
     // landmarkData = await this.prisma.landmark.update({
     //   where: { id: landmarkData.id },
     //   data: {
@@ -37,17 +38,12 @@ export class LandmarkRepository {
     return landmarkData;
   }
 
-  async findByName(getLandmarkDto : GetLandmarkDto): Promise<Landmark> {
+  async findLandmarkByName(getLandmarkDto: GetLandmarkDto): Promise<Landmark> {
     return await this.prisma.landmark.findUnique({ where: getLandmarkDto });
   }
 
-
-  async findLandmarkByName(getLandmarkDto: GetLandmarkDto) {
-    return this.prisma.landmark.findUnique({ where: getLandmarkDto });
-  }
-
-  async findLandmarksByAreaId(areaId: number) {
-    return this.prisma.landmark.findMany({ 
+  async findLandmarksByAreaId(areaId: number): Promise<Landmark[]> {
+    return await this.prisma.landmark.findMany({ 
       where: { areaId },
       take: 5, 
     });
