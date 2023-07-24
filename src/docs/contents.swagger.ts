@@ -6,6 +6,7 @@ const LandmarkResponse = {
      \`name\`: 제목 
      \`address\`: 주소 
      \`imagePath\`: 이미지 Path 
+     \`nearByLandmarks\` : 근처 랜드마크 리스트
     `,
     type: LandmarkResponseDto,
 }

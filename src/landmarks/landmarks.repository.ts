@@ -1,13 +1,11 @@
 import { PrismaService } from 'src/prisma.service'; 
 import { Landmark } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
-import { join } from 'path';
 import { GetLandmarkDto } from './dto/landmark.request.dto';
+import { LandmarkResponseDto } from './dto/landmark.response.dto';
 
 @Injectable()
 export class LandmarkRepository {
-  private readonly DATA_DIR = join(__dirname, '..', '..','data'); // 'data' 디렉토리 경로
-  private readonly IMAGES_DIR = join(this.DATA_DIR, 'img'); // 'data/images' 디렉토리 경로
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -42,19 +40,11 @@ export class LandmarkRepository {
     return await this.prisma.landmark.findUnique({ where: getLandmarkDto });
   }
 
-  async findLandmarksByAreaId(areaId: number): Promise<Landmark[]> {
+  async getNearByLandmarksByAreaId(areaId: number): Promise<{name:string, address:string, imagePath:string}[]> {
     return await this.prisma.landmark.findMany({ 
       where: { areaId },
       take: 5, 
     });
-  }
-
-  async updateImagePath(getLandmarkDto: GetLandmarkDto, imagePath: string): Promise<Landmark> {
-    const landmark = await this.prisma.landmark.update({
-      where: getLandmarkDto,
-      data: { imagePath },
-    });
-    return landmark;
   }
 
 }

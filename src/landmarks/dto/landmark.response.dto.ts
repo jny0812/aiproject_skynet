@@ -1,7 +1,7 @@
 import { IsString, IsInt } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class LandmarkResponseDto {
+class LandmarkResponseDto {
 
   @ApiProperty({ description: 'The name of the landmark', example: 'DMC래미안e편한세상3단지' })
   @IsString()
@@ -15,3 +15,5 @@ export class LandmarkResponseDto {
   @IsString()
   imagePath: string;
 }
+
+export {LandmarkResponseDto}

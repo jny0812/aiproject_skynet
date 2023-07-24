@@ -1,17 +1,17 @@
 import { GetLandmarkDto } from "src/landmarks/dto/landmark.request.dto";
 
-function getImagePath(getLandmarkDto: GetLandmarkDto): string {
+//대표사진 경로
+function getImagePath(imageName: string): string {
     const bucketName = 'aiproject-2023-07-v1';
-    const fileName = encodeURIComponent(getLandmarkDto.name);
-    const imagePath = `https://${bucketName}.s3.amazonaws.com/${fileName}.jpg`;
-    console.log('imagePath: ',imagePath);
+    const imagePath = `https://${bucketName}.s3.amazonaws.com/${imageName}`;
     return imagePath;
 }
 
+//검색용 폴더
 function getUserImagePath(getLandmarkDto: GetLandmarkDto): string {
     const bucketName = 'aiproject-2023-07-v1';
     const fileName = encodeURIComponent(getLandmarkDto.name);
-    const imagePath = `https://${bucketName}.s3.amazonaws.com/User/${fileName}.jpg`;
+    const imagePath = `https://${bucketName}.s3.amazonaws.com/User/${fileName}`;
     console.log('imagePath: ',imagePath);
     return imagePath;
 }
