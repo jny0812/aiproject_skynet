@@ -1,9 +1,9 @@
-import { Landmark, Area } from '@prisma/client';
+import { Landmark } from '@prisma/client';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { LandmarkRepository } from './landmarks.repository';
 import { GetLandmarkDto } from './dto/landmark.request.dto';
 import { S3Service } from 'src/common/s3/s3.service';
-
+import { getImagePath } from 'src/common/utils/s3.utils';
 @Injectable()
 export class LandmarkService {
   constructor(
@@ -27,9 +27,8 @@ export class LandmarkService {
       throw new Error('Landmark not found');
     }
     if (landmark.imagePath == landmark.fileName) {
-      const imagePath = this.getImagePath(getLandmarkDto);
+      const imagePath = getImagePath(getLandmarkDto);
       landmark = await this.landmarkRepo.updateImagePath(getLandmarkDto, imagePath);
-      console.log('landmark: ',landmark);
     }
     return landmark
   }
@@ -39,16 +38,15 @@ export class LandmarkService {
     if (!findLandmark) {
       throw new Error('Landmark not found');
     }
-    
+
     let landmarks = await this.landmarkRepo.findLandmarksByAreaId(findLandmark.areaId)
     let landmark: Landmark;
     let updatedLandmarks: Landmark[] = [];
     for (landmark of landmarks) {
       if (landmark.imagePath == landmark.fileName) {
-        const getLandmarkDto = { name: landmark.name };  // Assuming name is the key
-        const imagePath = this.getImagePath(getLandmarkDto);
+        const getLandmarkDto = { name: landmark.name };
+        const imagePath = getImagePath(getLandmarkDto);
         const updateLandmark = await this.landmarkRepo.updateImagePath(getLandmarkDto, imagePath);
-        console.log('updateLandmark: ',updateLandmark);
         updatedLandmarks.push(updateLandmark);
       }
     }
@@ -57,12 +55,5 @@ export class LandmarkService {
     return landmarks
   }
 
-  getImagePath(getLandmarkDto: GetLandmarkDto): string {
-    const bucketName = 'aiproject-2023-07-v1';
-    const fileName = encodeURIComponent(getLandmarkDto.name);
-    const imagePath = `https://${bucketName}.s3.amazonaws.com/${fileName}.jpg`;
-    console.log('imagePath: ',imagePath);
-    return imagePath
-  }
 
 }
