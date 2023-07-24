@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class S3Service {
@@ -21,7 +20,7 @@ export class S3Service {
   async uploadFile(fileName: string, fileBuffer: Buffer): Promise<string> {
     const uploadCommand = new PutObjectCommand({
       Bucket: this.configService.get<string>('AWS_BUCKET_NAME'),
-      Key: fileName,
+      Key: `User/${fileName}`,
       Body: fileBuffer,
     });
 
@@ -32,10 +31,4 @@ export class S3Service {
     return url;
   }
 
-//   generateUniqueFileName(file: Express.Multer.File): string {
-//     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-//     const extension = file.originalname.split('.').pop();
-//     const fileName = `${file.fieldname}-${uniqueSuffix}.${extension}`;
-//     return fileName;
-//   }
 }
