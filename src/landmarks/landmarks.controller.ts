@@ -1,22 +1,29 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseInterceptors, UploadedFile, Patch, Put } from '@nestjs/common';
 import { LandmarkService } from './landmarks.service';
 import { Landmark } from '@prisma/client';
 import { CreateLandmarkDto, GetLandmarkDto } from './dto/landmark.request.dto';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { LandmarkResponseDto } from './dto/landmark.response.dto';
-
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import LandmarkResponse from 'src/docs/contents.swagger';
+import { FileInterceptor } from '@nestjs/platform-express/multer';
+import { ApiFile } from 'src/common/decorators/apiFile.decorator';
 @ApiTags('landmark')
 @Controller('landmark')
 export class LandmarkController {
   constructor(private readonly landmarkService: LandmarkService) {}
 
-  @Get(':name')
-  @ApiParam({ name: 'name', required: true, description: 'The name of the landmark' })
-  @ApiOperation({ summary: 'Get a landmark by name' })
-  @ApiResponse({ status: 200, description: 'The landmark details', type: LandmarkResponseDto })
-  async getLandmark(@Param() getLandmarkDto: GetLandmarkDto) {
-
-    const landmark = await this.landmarkService.updateImagePath(getLandmarkDto);
+  @Post('upload/:name')
+  @ApiFile()
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File, @Param() getLandmarkDto: GetLandmarkDto) {
+    if (!file) {
+      throw new Error('File is not provided');
+    }
+    const fileNameKey = `${file.originalname}`;
+    const fileName = file.originalname;
+    console.log('fileName: ',fileName);
+    const fileBuffer = file.buffer;
+    
+    const landmark = await this.landmarkService.uploadImage(fileNameKey, fileBuffer, fileName);
 
     const { name, address, imagePath } = landmark;
 
@@ -25,14 +32,40 @@ export class LandmarkController {
       address,
       imagePath
     };
-
-    
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Get all landmarks' })
-  async getAllLandmarks(): Promise<Landmark[]> {
-    return this.landmarkService.getAllLandmarks();
+  @Get(':name')
+  @ApiParam({ name: 'name', required: true, description: 'The name of the landmark' })
+  @ApiOperation({ summary: 'Get a landmark by name' })
+  @ApiResponse(LandmarkResponse)
+  async getLandmark(@Param() getLandmarkDto: GetLandmarkDto): Promise<{ name: string, address: string, imagePath: string }> {
+
+    const landmark = await this.landmarkService.getLandmarkByName(getLandmarkDto);
+    const { name, address, imagePath } = landmark;
+
+    return {
+      name,
+      address,
+      imagePath
+    };
+  }
+
+  @Get('area/:name')
+  @ApiParam({ name: 'name', required: true, description: 'The name of the landmark' })
+  @ApiOperation({ summary: 'Get a landmark by name' })
+  @ApiResponse(LandmarkResponse)
+  async getLandmarksByArea(@Param() getLandmarkDto: GetLandmarkDto): Promise<Landmark[]> {
+    return this.landmarkService.getLandmarksByArea(getLandmarkDto);
+  }
+
+  @Put('update-image-path/:name')
+  @ApiParam({ name: 'name', required: true, description: 'The name of the landmark' })
+  @ApiOperation({ summary: 'Get a landmark by name' })
+  @ApiResponse(LandmarkResponse)
+  async updateImagePath(@Param() getLandmarkDto: GetLandmarkDto) {
+    const imagePath = this.landmarkService.getImagePath(getLandmarkDto);
+    return await this.landmarkService.updateImagePath(getLandmarkDto, imagePath);
+     
   }
 
 }
