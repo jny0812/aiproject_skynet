@@ -6,8 +6,6 @@ import { S3Service } from 'src/common/s3/s3.service';
 
 @Injectable()
 export class LandmarkService {
-  //constructor(private landmarkRepo: LandmarkRepository) {}
-
   constructor(
     private readonly landmarkRepo: LandmarkRepository,
     private readonly s3Service: S3Service,
@@ -24,7 +22,16 @@ export class LandmarkService {
   }
 
   async getLandmarkByName(getLandmarkDto: GetLandmarkDto): Promise<Landmark> {
-    return await this.landmarkRepo.findByName(getLandmarkDto);
+    let landmark = await this.landmarkRepo.findByName(getLandmarkDto);
+    if (!landmark) {
+      throw new Error('Landmark not found');
+    }
+    if (landmark.imagePath == landmark.fileName) {
+      const imagePath = this.getImagePath(getLandmarkDto);
+      landmark = await this.landmarkRepo.updateImagePath(getLandmarkDto, imagePath);
+      console.log('landmark: ',landmark);
+    }
+    return landmark
   }
 
   async getLandmarksByArea(getLandmarkDto: GetLandmarkDto): Promise<Landmark[]> {
@@ -32,7 +39,6 @@ export class LandmarkService {
     if (!landmarks) {
       throw new Error('Landmark not found');
     }
-    
     return this.landmarkRepo.findLandmarksByAreaId(landmarks.areaId);
   }
 
@@ -44,7 +50,4 @@ export class LandmarkService {
     return imagePath
   }
 
-  async updateImagePath(getLandmarkDto: GetLandmarkDto, imagePath: string): Promise<Landmark> {
-    return await this.landmarkRepo.updateImagePath(getLandmarkDto, imagePath);
-  }
 }
