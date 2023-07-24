@@ -1,7 +1,7 @@
-import { Controller, Post, Body, Get, Param, UseInterceptors, UploadedFile, Patch, Put } from '@nestjs/common';
+import { Controller, Post, Get, Param, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { LandmarkService } from './landmarks.service';
 import { Landmark } from '@prisma/client';
-import { CreateLandmarkDto, GetLandmarkDto } from './dto/landmark.request.dto';
+import { GetLandmarkDto } from './dto/landmark.request.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import LandmarkResponse from 'src/docs/contents.swagger';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
