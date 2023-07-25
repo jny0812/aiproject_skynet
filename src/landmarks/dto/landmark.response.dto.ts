@@ -1,19 +1,37 @@
+
 import { IsString, IsInt } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude, Expose } from 'class-transformer';
 
-class LandmarkResponseDto {
+export class LandmarkResponseDto {
 
   @ApiProperty({ description: 'The name of the landmark', example: 'DMC래미안e편한세상3단지' })
   @IsString()
+  @Expose()
   name: string;
 
   @ApiProperty({ description: 'The address of the landmark', example: '서울특별시 서대문구 수색로 100' })
   @IsString()
+  @Expose()
   address: string;
 
   @ApiProperty({ description: 'The image path of the landmark', example: 'D:\\7team_back\\data\\img\\DMC래미안e편한세상3단지_001_0.jpg' })
   @IsString()
+  @Expose()
   imagePath: string;
-}
 
-export {LandmarkResponseDto}
+  @Exclude()
+  @ApiProperty({ description: 'The id of the landmark', example: 1 })
+  @IsInt()
+  id: number;
+
+  @Exclude()
+  @ApiProperty({ description: 'The user id of the landmark', example: 1 })
+  @IsString()
+  fileName: string;
+
+  @Exclude()
+  @ApiProperty({ description: 'The id of the landmark', example: 1 })
+  @IsInt()
+  areaId: number;
+}

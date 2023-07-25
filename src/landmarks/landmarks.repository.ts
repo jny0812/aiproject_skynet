@@ -40,7 +40,7 @@ export class LandmarkRepository {
     return await this.prisma.landmark.findUnique({ where: getLandmarkDto });
   }
 
-  async getNearByLandmarksByAreaId(areaId: number): Promise<{name:string, address:string, imagePath:string}[]> {
+  async getNearByLandmarksByAreaId(areaId: number): Promise<Landmark[]> {
     return await this.prisma.landmark.findMany({ 
       where: { areaId },
       take: 5, 
