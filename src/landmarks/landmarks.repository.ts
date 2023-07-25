@@ -11,15 +11,6 @@ export class LandmarkRepository {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async updateImagePathById(id: number, imagePath: string): Promise<Landmark> {
-    return this.prisma.landmark.update({
-      where: { id },
-      data: {
-        imagePath: imagePath,
-      },
-    });
-  }
-
   async uploadImage(fileName: string): Promise<Landmark> {
     let landmarkData = await this.prisma.landmark.findFirst({where: {fileName : fileName}})
 

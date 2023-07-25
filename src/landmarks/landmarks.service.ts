@@ -43,13 +43,4 @@ export class LandmarkService {
     return updatedLandmarks.map(landmark => plainToClass(LandmarkResponseDto, landmark));
   }
 
-  // async uploadImage(fileNameKey: string, fileBuffer: Buffer, fileName: string ): Promise<Landmark> {
-  //   const filePath = await this.s3Service.uploadFile(fileNameKey, fileBuffer);
-
-  //   const landmark = await this.landmarkRepo.uploadImage(fileName);
-  //   if (!landmark) {
-  //     throw new Error('Landmark not found');
-  //   }
-  //   return this.landmarkRepo.updateImagePathById(landmark.id, filePath);
-  // }
 }

@@ -3,8 +3,6 @@ import { LandmarkService } from './landmarks.service';
 import { GetLandmarkDto } from './dto/landmark.request.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import LandmarkResponse from 'src/docs/contents.swagger';
-import { FileInterceptor } from '@nestjs/platform-express/multer';
-import { ApiFile } from 'src/common/decorators/apiFile.decorator';
 import { LandmarkResponseDto } from './dto/landmark.response.dto';
 
 @ApiTags('landmark')
@@ -29,25 +27,5 @@ export class LandmarkController {
     return { landmark, nearByLandmarks}
   }
 
-  // @Post('upload')
-  // @ApiFile()
-  // @UseInterceptors(FileInterceptor('file'))
-  // async uploadFile(@UploadedFile() file: Express.Multer.File) {
-  //   if (!file) {
-  //     throw new Error('File is not provided');
-  //   }
-  //   const fileNameKey = `${file.originalname}`;
-  //   const fileName = file.originalname;
-  //   const fileBuffer = file.buffer;
-  //   console.log('fileName: ',fileName);
-
-  //   const landmark = await this.landmarkService.uploadImage(fileNameKey, fileBuffer, fileName);
-  //   const { name, address, imagePath } = landmark;
-
-  //   return {
-  //     name,
-  //     address,
-  //     imagePath
-  //   };
-  // }
 }
+
