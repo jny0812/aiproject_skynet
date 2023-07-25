@@ -1,4 +1,3 @@
-import { Landmark } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { LandmarkRepository } from './landmarks.repository';
 import { GetLandmarkDto } from './dto/landmark.request.dto';
@@ -13,8 +12,7 @@ export class LandmarkService {
     private readonly landmarkRepo: LandmarkRepository,
     private readonly s3Service: S3Service,
   ) {}
-
-
+ 
   //해당 랜드마크 정보 추출 (이름으로 검색)
   async getLandmarkByName(getLandmarkDto: GetLandmarkDto): Promise<LandmarkResponseDto> {
     let landmark = await this.landmarkRepo.findLandmarkByName(getLandmarkDto);
@@ -25,9 +23,7 @@ export class LandmarkService {
     const imagePath = getImagePath(landmark.imagePath);
     landmark.imagePath = imagePath;
 
-    landmark = plainToClass(LandmarkResponseDto, landmark);
-
-    return landmark
+    return plainToClass(LandmarkResponseDto, landmark);
   }
 
   //주변 랜드마크 정보 추출 (지역ID로 검색 - 상위 5개)
@@ -43,12 +39,8 @@ export class LandmarkService {
       ...landmark,
       imagePath: getImagePath(landmark.imagePath),
     }));
-
-    //할당
-    const nearByLandmarks = updatedLandmarks.map(landmark => plainToClass(LandmarkResponseDto, landmark));
   
-    return nearByLandmarks;
+    return updatedLandmarks.map(landmark => plainToClass(LandmarkResponseDto, landmark));
   }
-
 
 }

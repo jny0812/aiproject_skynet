@@ -1,10 +1,8 @@
-import { Controller, Post, Get, Param, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Param, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { LandmarkService } from './landmarks.service';
-import { Landmark } from '@prisma/client';
 import { GetLandmarkDto } from './dto/landmark.request.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import LandmarkResponse from 'src/docs/landmarks/landmarks.swagger';
-import { FileInterceptor } from '@nestjs/platform-express/multer';
+import LandmarkResponse from 'src/docs/contents.swagger';
 import { LandmarkResponseDto } from './dto/landmark.response.dto';
 
 @ApiTags('landmark')
@@ -28,4 +26,5 @@ export class LandmarkController {
 
     return { landmark, nearByLandmarks}
   }
+
 }
