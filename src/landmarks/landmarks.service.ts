@@ -13,16 +13,6 @@ export class LandmarkService {
     private readonly landmarkRepo: LandmarkRepository,
     private readonly s3Service: S3Service,
   ) {}
- 
-  // async uploadImage(fileNameKey: string, fileBuffer: Buffer, fileName: string ): Promise<Landmark> {
-  //   const filePath = await this.s3Service.uploadFile(fileNameKey, fileBuffer);
-
-  //   const landmark = await this.landmarkRepo.uploadImage(fileName);
-  //   if (!landmark) {
-  //     throw new Error('Landmark not found');
-  //   }
-  //   return this.landmarkRepo.updateImagePathById(landmark.id, filePath);
-  // }
 
 
   //해당 랜드마크 정보 추출 (이름으로 검색)
