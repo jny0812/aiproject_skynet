@@ -2,8 +2,8 @@ import { Controller, Get, Param, UseInterceptors, UploadedFile } from '@nestjs/c
 import { LandmarkService } from './landmarks.service';
 import { GetLandmarkDto } from './dto/landmark.request.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import LandmarkResponse from 'src/docs/contents.swagger';
 import { LandmarkResponseDto } from './dto/landmark.response.dto';
+import LandmarkResponse from 'src/docs/landmarks/landmarks.swagger';
 
 @ApiTags('landmark')
 @Controller('landmark')

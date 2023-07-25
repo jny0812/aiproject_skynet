@@ -8,5 +8,9 @@ export class GetLandmarkDto {
     example: '63시티'
   })
   readonly name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
 }
 

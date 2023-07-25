@@ -7,6 +7,7 @@ import { S3Module } from 'src/common/s3/s3.module';
 @Module({
   imports: [S3Module],
   controllers: [LandmarkController],
-  providers: [LandmarkService, PrismaService, LandmarkRepository]
+  providers: [LandmarkService, PrismaService, LandmarkRepository],
+  exports : [LandmarkService]
 })
 export class LandmarksModule {}
