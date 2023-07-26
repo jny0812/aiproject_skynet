@@ -5,12 +5,14 @@ import { S3Service } from 'src/common/s3/s3.service';
 import { LandmarkResponseDto } from './dto/landmark.response.dto';
 import { getImagePath } from 'src/common/s3/s3.utils';
 import { plainToClass } from 'class-transformer';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class LandmarkService {
   constructor(
     private readonly landmarkRepo: LandmarkRepository,
     private readonly s3Service: S3Service,
+    private configService: ConfigService
   ) {}
  
   //해당 랜드마크 정보 추출 (이름으로 검색)
@@ -20,7 +22,7 @@ export class LandmarkService {
       throw new Error('Landmark not found');
     }
 
-    const imagePath = getImagePath(landmark.imagePath);
+    const imagePath = getImagePath(this.configService, landmark.imagePath);
     landmark.imagePath = imagePath;
 
     return plainToClass(LandmarkResponseDto, landmark);
@@ -37,7 +39,7 @@ export class LandmarkService {
     //파일명 이름으로이미지 경로 업데이트
     const updatedLandmarks = landmarks.map((landmark) => ({
       ...landmark,
-      imagePath: getImagePath(landmark.imagePath),
+      imagePath: getImagePath(this.configService, landmark.imagePath),
     }));
   
     return updatedLandmarks.map(landmark => plainToClass(LandmarkResponseDto, landmark));
