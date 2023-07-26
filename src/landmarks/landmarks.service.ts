@@ -3,7 +3,7 @@ import { LandmarkRepository } from './landmarks.repository';
 import { GetLandmarkDto } from './dto/landmark.request.dto';
 import { S3Service } from 'src/common/s3/s3.service';
 import { LandmarkResponseDto } from './dto/landmark.response.dto';
-import { getImagePath } from 'src/common/utils/s3.utils';
+import { getImagePath } from 'src/common/s3/s3.utils';
 import { plainToClass } from 'class-transformer';
 
 @Injectable()
