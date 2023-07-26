@@ -2,7 +2,7 @@ import { PrismaService } from 'src/prisma.service';
 import { Landmark } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import { GetLandmarkDto } from './dto/landmark.request.dto';
-import { LandmarkEntity } from 'src/entities/landmark.entity';
+import { LandmarkEntity } from 'src/landmarks/landmark.entity';
 import { plainToClass } from 'class-transformer';
 
 
