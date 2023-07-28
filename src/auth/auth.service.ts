@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthResponseDto } from './dto/auth.response.dto';
-import { RegisterRequestDto } from './dto/auth.request.dto';
+import { LoginRequestDto, RegisterRequestDto } from './dto/auth.request.dto';
 import { UsersRepository } from '../users/users.repository';
 import { Security } from './auth.security';
 import { AuthRegisterResponseDto } from './dto/auth.RegisterResponse.dto';
@@ -30,7 +30,6 @@ export class AuthService {
                 user.password
             );
 
-
             //유저 등록
             await this.userRepository.createUser({
                 email: user.email,
@@ -42,10 +41,20 @@ export class AuthService {
         } catch (error) {
             throw new Error(error);
         }
-
     };
+
+    async login(loginRequestDto: LoginRequestDto): Promise<{accessToken: string}> {
+        const user = await this.userRepository.getUserByUserName(loginRequestDto.userName);
+        console.log("user",user);
+        if(user && (await this.security.comparePassword(loginRequestDto.password, user.password))) {
+          // 유저 토큰 생성 ( Secret + Payload )
+          const payload = { userName: user.userName };
+          const accessToken = await this.jwtService.sign(payload);
+          return {accessToken};
+        }  else {
+            throw new UnauthorizedException('login failed')
+        }
+    }
     
 
-        
-    
 }

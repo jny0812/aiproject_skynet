@@ -10,11 +10,11 @@ export class UsersRepository {
         private prisma: PrismaService
     ) {}
 
-    //이메일 조회
+    //아이디 조회
     getUserByUserName = async (userName: string) : Promise<User | null> => {
-        const result =  await this.prisma.user.findFirst({ where: { userName }})
+        const result =  await this.prisma.user.findUnique({ where: { userName }})
         //console.log(result);
-
+        
         return result;
         
     };

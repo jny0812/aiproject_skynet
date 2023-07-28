@@ -1,10 +1,11 @@
-import { Body, Controller, HttpCode, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthResponse } from 'src/docs/auth/auth.swagger';
-import { RegisterRequestDto } from './dto/auth.request.dto';
+import { LoginRequestDto, RegisterRequestDto } from './dto/auth.request.dto';
 import { AuthResponseDto } from './dto/auth.response.dto';
 import { AuthRegisterResponseDto } from './dto/auth.RegisterResponse.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth - Register')
 @Controller('users')
@@ -20,6 +21,15 @@ export class AuthController {
         return this.authService.register(user);
     }
 
+    @Post('login')
+    async login(@Body(ValidationPipe) loginRequestDto: LoginRequestDto) : Promise<{accessToken: string}> {
+    return this.authService.login(loginRequestDto);
+    }
 
+    @Post('test')
+    @UseGuards(AuthGuard())
+    test(@Req() req){
+        console.log("req", req);
+    }
 
 }

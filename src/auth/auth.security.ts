@@ -15,7 +15,4 @@ export class Security {
         return await bcrypt.compare(inputPassword, hashedPassword);
     }
 
-    
-
-
 }
