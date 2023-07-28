@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
+import { Exclude } from "class-transformer";
 import { IsEmail, Length, IsString, Matches } from "class-validator"
 
 //회원가입 요청 DTO
@@ -19,21 +20,21 @@ export class RegisterRequestDto {
     @Length(5,255, { message: '아이디는 5자 이상 255자 이하로 입력하시기 바랍니다.' })
     userName: string;
 
+    @Exclude()
+    profilePath: string;
+
+    @Exclude()
+    description: string;
+
+    @Exclude()
+    createdAt: number;
+  
+    @Exclude()
+    updatedAt: number;
+
+    @Exclude()
+    deletedAt: number;
+
+    
+
 }
-
-
-
-
-
-
-// import { IsString } from 'class-validator';
-// import { ApiProperty } from '@nestjs/swagger';
-
-// export class GetLandmarkDto {
-//   @IsString()
-//   @ApiProperty({
-//     description: 'The name of the landmark',
-//     example: '63시티'
-//   })
-//   readonly name: string;
-// }
