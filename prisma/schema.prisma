@@ -33,9 +33,10 @@ model Landmark {
 
 //User 테이블
 model User {
-  id Int @id @default(autoincrement()) @map("landmark_id")
+  id String @id @default(uuid()) @db.VarChar(36) @map("landmark_id")
   userName String @unique @db.VarChar(255) @map("user_name")
   email String @db.VarChar(255)
+  password    String @db.VarChar(255)
   profilePath String @map("profile_path")
   description String  
 
