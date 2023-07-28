@@ -33,12 +33,16 @@ model Landmark {
 
 //User 테이블
 model User {
-  id String @id @default(uuid()) @db.VarChar(36) @map("landmark_id")
-  userName String @unique @db.VarChar(255) @map("user_name")
-  email String @db.VarChar(255)
-  password    String @db.VarChar(255)
-  profilePath String @map("profile_path")
-  description String  
+  id          String    @id @default(uuid()) @map("user_id")
+  userName    String @unique @map("user_name") @db.VarChar(255)
+  email       String @db.VarChar(255)
+  password    String? @db.VarChar(255)
+  profilePath String? @map("profile_path")
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @db.Timestamp() @map("updated_at")
+  deletedAt DateTime? @db.Timestamp() @map("deleted_at")
 
   bookmarks Bookmark[]
 }
@@ -46,7 +50,7 @@ model User {
 //Bookmark 모델
 model Bookmark {
   landmarkId Int @map("landmark_id")
-  userId Int @map("user_id")
+  userId String @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
 
   @@id([landmarkId, userId])

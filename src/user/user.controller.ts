@@ -1,14 +1,26 @@
 import { Controller, Get, Param, Patch, Body } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
+import { UserRequestDto } from './dto/user.request.dto';
+//import { AuthGuard } from '@nestjs/passport';
 
+
+//@UseGuards(AuthGuard())
 @Controller('user')
 export class UserController {
-    constructor(private readonly userService: UserService){}
+    constructor(
+        private readonly userService: UserService,
+    ){}
+
+    // 
     @Get(':id')
-    async getUserById(@Param('id') id: string): Promise<UserEntity|null>{
+    async getUserById(
+        @Req() req: 
+        @Param() id: UserRequestDto ): Promise<UserEntity|null>{
         return this.userService.getUserById(id);
     }
+
+
     @Patch(':id')
     async updateUserInfo(
         @Param('id') id: string,
