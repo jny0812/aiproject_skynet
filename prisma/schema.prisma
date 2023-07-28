@@ -12,21 +12,21 @@ datasource db {
 
 //Area 테이블 
 model Area {
-  id Int @id @default(autoincrement()) @map("area_id")
-  siDo String 
-  siGu String 
+  id       Int @id @default(autoincrement()) @map("area_id")
+  siDo     String 
+  siGu     String 
   Landmark Landmark[]
 }
 
 //Landmark 테이블
 model Landmark {
-  id Int @id @default(autoincrement()) @map("landmark_id")
-  name String @unique @map("landmark_name")@db.VarChar(255)
-  address String @db.VarChar(255)
-  imagePath String @map("image_path")
-  fileName String @map("file_name")
-  areaId Int @map("area_id")
-  area Area @relation(fields: [areaId], references: [id])
+  id         Int @id @default(autoincrement()) @map("landmark_id")
+  name       String @unique @map("landmark_name")@db.VarChar(255)
+  address    String @db.VarChar(255)
+  imagePath  String @map("image_path")
+  fileName   String @map("file_name")
+  areaId     Int @map("area_id")
+  area       Area @relation(fields: [areaId], references: [id])
 
   bookmarks Bookmark[]
 }
@@ -49,14 +49,14 @@ model User {
 
 //Bookmark 모델
 model Bookmark {
-  landmarkId Int @map("landmark_id")
-  userId String @map("user_id")
-  createdAt DateTime @default(now()) @map("created_at")
+  landmarkId  Int @map("landmark_id")
+  userId      String @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
 
   @@id([landmarkId, userId])
   @@map("bookmark")
 
   landmark Landmark @relation(fields: [landmarkId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  user     User @relation(fields: [userId], references: [id])
 
 }
