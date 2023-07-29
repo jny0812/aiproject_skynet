@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from 'src/prisma.service';
-import { BookmarkEntity } from "./bookmark.entity";
+import { BookmarksEntity } from "./bookmarks.entity";
 import { plainToClass } from "class-transformer";
 
 @Injectable()
 export class BookmarkRepository{
     constructor(private readonly prisma: PrismaService){}
 
-    async createBookmark(bookmark: BookmarkEntity): Promise<BookmarkEntity> {
+    async createBookmark(bookmark: BookmarksEntity): Promise<BookmarksEntity> {
         const createdBookmark = await this.prisma.bookmark.create({
             data:{
                 userId: bookmark.userId,
@@ -15,15 +15,15 @@ export class BookmarkRepository{
                 createdAt: bookmark.createdAt
             }
         });
-        return plainToClass(BookmarkEntity, createdBookmark);
+        return plainToClass(BookmarksEntity, createdBookmark);
     }
-    async getBookmarksByuserId(userId: string): Promise<BookmarkEntity[]> {
+    async getBookmarksByuserId(userId: string): Promise<BookmarksEntity[]> {
         const bookmarks = await this.prisma.bookmark.findMany({
                     where: {
                         userId: userId
                     }
                 });
-        return bookmarks.map((bookmark) => plainToClass(BookmarkEntity, bookmark));
+        return bookmarks.map((bookmark) => plainToClass(BookmarksEntity, bookmark));
     }
     
     async deleteBookmark(userId: string, landmarkId: number): Promise<void> {

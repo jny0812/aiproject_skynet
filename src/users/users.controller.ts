@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Patch, Body } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserEntity } from './user.entity';
-import { UserRequestDto } from './dto/user.request.dto';
+import { UserService } from './users.service';
+import { UsersEntity } from './users.entity';
+import { UsersRequestDto } from './dto/users.request.dto';
 //import { AuthGuard } from '@nestjs/passport';
 
 
@@ -14,10 +14,14 @@ export class UserController {
 
     // 
     @Get(':id')
-    async getUserById(
-        @Req() req: 
-        @Param() id: UserRequestDto ): Promise<UserEntity|null>{
+    async getUserById( 
+        @Param() id: string ): Promise<UsersEntity|null>{
         return this.userService.getUserById(id);
+    }
+
+    @Get('bookmark/:id')
+    async getUserByIdWithBookmarks(@Param('id') id: string): Promise<UsersEntity | null> {
+        return this.userService.getUserByIdWithBookmarks(id);
     }
 
 
@@ -27,7 +31,7 @@ export class UserController {
         @Body('profilePath') profilePath: string,
         @Body('username') username: string,
         @Body('description') description: string,
-    ): Promise<UserEntity>{
+    ): Promise<UsersEntity>{
         return this.userService.updateUserInfo(id, profilePath, username, description);
     }
 

@@ -1,18 +1,18 @@
 import { Controller, Post, Get, Body, Param, Delete } from '@nestjs/common';
-import { BookmarkService } from './bookmark.service';
-import { BookmarkEntity } from './bookmark.entity';
+import { BookmarksService } from './bookmarks.service';
+import { BookmarksEntity } from './bookmarks.entity';
 
 
 
 @Controller('bookmark')
 export class BookmarkController {
-    constructor(private readonly bookmarkService: BookmarkService) {}
+    constructor(private readonly bookmarkService: BookmarksService) {}
     @Post()
-    async createBookmark(@Body() bookmark: BookmarkEntity): Promise<BookmarkEntity> {
+    async createBookmark(@Body() bookmark: BookmarksEntity): Promise<BookmarksEntity> {
         return this.bookmarkService.createBookmark(bookmark);
     }
     @Get()
-    async getBookmarksByUserId(@Param('userId') userId: string ): Promise<BookmarkEntity[]> {
+    async getBookmarksByUserId(@Param('userId') userId: string ): Promise<BookmarksEntity[]> {
         return this.bookmarkService.getBookmarksByUserId();
         }
     @Delete()

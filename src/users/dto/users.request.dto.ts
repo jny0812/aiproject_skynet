@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-export class UserRequestDto extends Request {
+export class UsersRequestDto{
 
     @ApiProperty()
     @IsString()
