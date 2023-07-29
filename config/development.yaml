@@ -4,5 +4,10 @@ db:
   password: "postgres"
   synchronize: true
 
+server:
+  #host: "localhost"
+  port: 3000
+
 AiServer:
+  host: "127.0.0.1"
   port: 5001

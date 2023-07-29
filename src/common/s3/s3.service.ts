@@ -52,19 +52,18 @@ export class S3Service {
       Bucket: this.configService.get<string>('AWS_BUCKET_NAME'),
       Key: imageKey
     });
-    console.log("1");
+
     const result = await this.s3.send(command);
-    console.log("2");
     const isPublicRead = (result as GetObjectAclOutput).Grants.some(
       grant => grant.Permission === 'READ' && grant.Grantee.URI === 'http://acs.amazonaws.com/groups/global/AllUsers'
-    );
-    console.log("3");  
+    ); 
+    
     return isPublicRead;
   }
 
   async ensureImageIsPublic(imageKey: string): Promise<void> {
     const isPublicRead = await this.checkObjectAcl(imageKey);
-    console.log("4");
+
     if (!isPublicRead) {
       await this.updateImageAcl(imageKey);
     }

@@ -15,7 +15,6 @@ function getUserImagePath(configService: ConfigService, getLandmarkDto: GetLandm
     const region = configService.get<string>('AWS_REGION')
     const fileName = encodeURIComponent(getLandmarkDto.name);
     const imagePath = `https://${bucketName}.s3.${region}.amazonaws.com/User/${fileName}`;
-    console.log('imagePath: ',imagePath);
     return imagePath;
 }
 

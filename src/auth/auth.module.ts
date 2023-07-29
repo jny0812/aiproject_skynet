@@ -9,7 +9,9 @@ import { Security } from './auth.security';
 import { PrismaService } from 'src/prisma.service';
 import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
+import * as Config from 'config';
 
+const time = (Config.get('jwt') as { expiresIn: number }).expiresIn;
 @Module({
   imports: [
     ConfigModule,
@@ -20,7 +22,7 @@ import { PassportModule } from '@nestjs/passport';
       inject: [ConfigService],
       useFactory: async ( configService: ConfigService,): Promise<JwtModuleOptions> => ({
         secret: configService.get<string>('JWT_SECRETKEY'),
-        signOptions: { expiresIn: '1h' },
+        signOptions: { expiresIn: time },
       }),
     }),
   ],

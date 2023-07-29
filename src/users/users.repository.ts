@@ -13,7 +13,6 @@ export class UsersRepository {
     //아이디 조회
     getUserByUserName = async (userName: string) : Promise<User | null> => {
         const result =  await this.prisma.user.findUnique({ where: { userName }})
-        //console.log(result);
         
         return result;
         

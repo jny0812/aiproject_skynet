@@ -4,7 +4,10 @@ import { ImagesService } from './images.service';
 import { memoryStorage } from 'multer';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import LandmarkResponse from 'src/docs/landmarks/landmarks.swagger';
+import * as Config from 'config';
+import { LandmarkResponseDto } from 'src/landmarks/dto/landmark.response.dto';
 
+const size = Config.get<{ filesize: number }>('image').filesize;
 @ApiTags('image')
 @Controller('image')
 export class ImagesController {
@@ -15,14 +18,14 @@ export class ImagesController {
   @ApiResponse(LandmarkResponse)
   @UseInterceptors(FileInterceptor('file', {
     storage: memoryStorage(),
-    limits: { fileSize: 1024 * 1024 * 5 } // 5MB 제한
+    limits: { fileSize: size } // 5MB 제한
   }))
-  async uploadImage(@UploadedFile('file') file: Express.Multer.File) {
+  async uploadImage(@UploadedFile('file') file: Express.Multer.File): Promise<{ landmark: LandmarkResponseDto; nearByLandmarks: LandmarkResponseDto[]; }> {
     const imageBuffer = file.buffer;
     const landmarkName = await this.imagesService.sendImageToAi(imageBuffer); // server to AI and AI to server
     const landmarkInfo = await this.imagesService.getLandmarkInfo(landmarkName); // server to client
     console.log('landmarkInfo: ',landmarkInfo);
-    return landmarkInfo; // { landmark, nearByLandmarks}
+    return landmarkInfo;
   }
 
 }
