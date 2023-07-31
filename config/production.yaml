@@ -7,4 +7,4 @@ server:
 
 AiServer:
   host: "34.64.246.94"
-  port: 1024 * 1024 * 5
+  port: 5001

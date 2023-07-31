@@ -5,6 +5,6 @@
   "trailingComma": "all",
   "bracketSpacing": true,
   "bracketSameLine": false,
-  "semi": true
+  "semi": true,
+  "endOfLine": "auto"
 }
-
