@@ -5,7 +5,7 @@ import { LandmarksModule } from "./landmarks/landmarks.module";
 import { AuthModule } from "./auth/auth.module";
 import { ImagesModule } from "./images/images.module";
 import { UsersModule } from "./users/users.module";
-import { BookmarksModule } from "./bookmarks/bookmarks.module";
+//import { BookmarksModule } from "./bookmarks/bookmarks.module";
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { BookmarksModule } from "./bookmarks/bookmarks.module";
     AuthModule,
     ImagesModule,
     UsersModule,
-    BookmarksModule,
+    //BookmarksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
