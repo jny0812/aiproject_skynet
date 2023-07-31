@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 
-export class AuthResponseDto {
+export class AuthRegisterResponseDto {
   @ApiProperty()
   @IsString()
-  token: string;
+  message: string;
 }
