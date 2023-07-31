@@ -1,30 +1,27 @@
 import { Exclude } from "class-transformer";
 
 export class UsersEntity {
+  email: string;
 
-    email: String;
+  password: string;
 
-    password: String;
+  userName: string;
 
-    userName: String;
+  @Exclude()
+  id: string;
 
-    @Exclude()
-    id: String;
+  createdAt: Date;
 
-    createdAt: Date;
+  @Exclude()
+  updatedAt: Date;
 
-    @Exclude()
-    updatedAt: Date;
+  @Exclude()
+  deletedAt: Date;
 
-    @Exclude()
-    deletedAt: Date;
-
-    @Exclude()
-    profilePath: String;
-
+  @Exclude()
+  profilePath: string;
 
   constructor(partial: Partial<UsersEntity>) {
     Object.assign(this, partial);
   }
-    
 }
