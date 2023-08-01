@@ -3,8 +3,6 @@
 /node_modules
 /data/img
 
-/src/bookmarks
-
 # Logs
 logs
 *.log
