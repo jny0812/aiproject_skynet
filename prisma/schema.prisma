@@ -49,13 +49,11 @@ model User {
 
 //Bookmark 모델
 model Bookmark {
+  id         Int      @id @default(autoincrement()) @map("bookmark_id")
   landmarkId Int      @map("landmark_id")
   userId     String   @map("user_id")
   createdAt  DateTime @default(now()) @map("created_at")
 
   landmark Landmark @relation(fields: [landmarkId], references: [id])
   user     User     @relation(fields: [userId], references: [id])
-
-  @@id([landmarkId, userId])
-  @@map("bookmark")
 }
