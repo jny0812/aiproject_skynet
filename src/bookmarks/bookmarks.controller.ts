@@ -31,6 +31,7 @@ export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
 
   @UseGuards(JwtAuthGuard)
+  //북마크 등록
   @Post()
   create(
     @Request() req: any,
@@ -49,6 +50,7 @@ export class BookmarksController {
     return this.bookmarksService.findOne(id);
   }
 
+  //지역구별 리스트
   @Get('user/:userId/area/:areaId')
   async findBookmarksByArea(
     @Param('userId') userId: string,
@@ -57,6 +59,7 @@ export class BookmarksController {
     return this.bookmarksService.findBookmarksByUserAndArea(userId, areaId);
   }
 
+  //북마크 삭제
   @UseGuards(JwtAuthGuard)
   @Delete(":landmarkId")
   async remove(

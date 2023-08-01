@@ -31,6 +31,7 @@ export class AuthController {
     return this.authService.register(user);
   }
 
+  //로그인
   @UseGuards(LocalAuthGuard)
   @HttpCode(200) // successfully logged in : 200
   @ApiOperation({ summary: "login" })

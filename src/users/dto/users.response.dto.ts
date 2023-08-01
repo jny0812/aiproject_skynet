@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BookmarksEntity } from "src/bookmarks/bookmarks.entity";
 import { Exclude } from 'class-transformer';
+import { IsDate } from 'class-validator';
 
 
-export class mainPageResponseDto {
+class myPageResponseDto {
+
   @ApiProperty()
   @Exclude()
   id: string;
@@ -16,11 +18,29 @@ export class mainPageResponseDto {
   email: string;
 
   @ApiProperty()
+  @Exclude()
+  password: string;
+
+  @ApiProperty()
   profilePath: string;
 
   @ApiProperty()
   description: string;
 
+  @ApiProperty()
+  @IsDate()
+  createdAt: Date;
+
+  @ApiProperty()
+  @Exclude()
+  updatedAt: Date;
+
+  @ApiProperty()
+  @Exclude()
+  deletedAt: Date;
+
   @ApiProperty({ type: [BookmarksEntity] })
   bookmarks: BookmarksEntity[];
 }
+
+export  {myPageResponseDto};

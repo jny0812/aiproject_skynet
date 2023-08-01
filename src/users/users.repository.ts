@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from 'src/prisma.service';
-import { User } from '@prisma/client';
+import { Bookmark, User } from '@prisma/client';
 import { UsersRequestDto } from './dto/users.request.dto';
 import { RegisterRequestDto } from "src/auth/dto/auth.request.dto";
 
@@ -24,18 +24,18 @@ export class UsersRepository {
       data: user,
     });
   };
-async getUserById(id: string): Promise<User | null> {
-        return this.prisma.user.findUnique({where: { id }});
-    }
 
-async getUserByIdWithBookmarks(id: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-        where: { id },
-        include: {
-            bookmarks: true,
-        },
-    });
-}
+
+  // 프로필 정보
+  async getUserById (id: string): Promise<User | null> {
+        return await this.prisma.user.findUnique({
+          where:  {
+            id
+          } 
+        });
+  }
+
+ 
 
 async updateUserInfo(id: string, profilePath: string, userName: string, description: string): Promise<User> {
      return this.prisma.user.update({where: {id}, data: {profilePath, userName, description}});}

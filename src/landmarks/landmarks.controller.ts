@@ -39,4 +39,32 @@ export class LandmarkController {
 
     return { landmark, nearByLandmarks };
   }
+
+
+  // @Get(":name/:userId")
+  // @ApiParam({
+  //   name: "name",
+  //   required: true,
+  //   description: "The name of the landmark",
+  // })
+  // @ApiOperation({ summary: "Get a landmark by name" })
+  // @ApiResponse(LandmarkResponse)
+  // async getLandmark(@Param() getLandmarkDto: GetLandmarkDto): Promise<{
+  //   landmark: LandmarkResponseDto;
+  //   nearByLandmarks: LandmarkResponseDto[];
+  // }> {
+  //   //해당 랜드마크 정보 추출
+  //   const landmark: LandmarkResponseDto =
+  //     await this.landmarkService.getLandmarkByName(getLandmarkDto);
+
+  //   //근처 랜드마크 리스트 추출
+  //   const nearByLandmarks = await this.landmarkService.getNearByLandmarksByArea(
+  //     landmark.areaId,
+  //   );
+
+  //   //북마크 상태
+  //   const status = if (북마크x) return false return true
+
+  //   return { landmark, nearByLandmarks };
+  // }
 }
