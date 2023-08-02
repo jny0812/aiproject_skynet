@@ -35,6 +35,51 @@ export class UsersRepository {
         });
   }
 
+   //마이페이지 - 북마크 리스트
+   //1. user_id > 랜드마크 아이디 
+  // async getBookmarksByUserId (id: string): Promise<Bookmark | null> {
+  //   const bookmarkList = await this.prisma.bookmark.findMany({
+
+
+
+  //   })
+  // }
+  async countBookmarksBySiDo(id: string) : Promise<{ [siDo: string]: number } | null>{
+    try {
+      const bookmarks = await this.prisma.bookmark.findMany({
+        where: {
+          userId : id,
+        },
+        select: {
+          landmark: {
+            select: {
+              name: true,
+              area: {
+                select: {
+                  siDo: true,
+                },
+              },
+            },
+          },
+        },
+      });
+  
+      // Group by siDo and count the bookmarks
+      const siDoCounts: { [siDo: string]: number } = {};
+      for (const bookmark of bookmarks) {
+        const siDo = bookmark.landmark.area.siDo;
+        siDoCounts[siDo] = (siDoCounts[siDo] || 0) + 1;
+      }
+    
+      return siDoCounts;
+
+    } 
+    catch (error) {
+      throw new Error(`Error counting bookmarks: ${error.message}`);
+    }
+  }
+  
+
  
 
 async updateUserInfo(id: string, profilePath: string, userName: string, description: string): Promise<User> {

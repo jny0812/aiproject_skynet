@@ -103,9 +103,11 @@ export { ResponseBookmarkDto, SiDoBookmarkListDto };
 
 //import { Landmark } from "./src/landmark/landmark.entity";
 
-// export class GetBookmarkResponseDto {
-//   @ApiProperty({ example: 1, description: "The id of the bookmark" })
-//   id: number;
+  @ApiProperty({
+    example: "150년수령느티나무",
+    description: "장소명",
+  })
+  name: string;
 
 //   @ApiProperty({
 //     example: {
