@@ -68,13 +68,13 @@ export class BookmarksController {
     return this.bookmarksService.create(userId, landmarkId);
   }
 
-  // @Delete(":landmarkId")
-  // async deleteBookmark(
-  //   @Request() req: any,
-  //   @Param("landmarkId") landmarkId: number,
-  // ): Promise<void | MessageResponseDto> {
-  //   const userId = req.user.id; // 로그인된 사용자의 ID
-  //   this.bookmarksService.delete(userId, landmarkId);
-  //   return { message: `landmarkId: ${landmarkId} deleted successfully` };
-  // }
+  @Delete(":landmarkId")
+  async deleteBookmark(
+    @Request() req: any,
+    @Param("landmarkId", ParseIntPipe) landmarkId: number,
+  ): Promise<void | MessageResponseDto> {
+    const userId = req.user.id; // 로그인된 사용자의 ID
+    const message = this.bookmarksService.delete(userId, landmarkId);
+    return message;
+  }
 }

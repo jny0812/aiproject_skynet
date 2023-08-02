@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { Bookmark, User } from "@prisma/client";
 import { BookmarksRepository } from "./bookmarks.repository";
@@ -105,15 +106,25 @@ export class BookmarksService {
     }
   }
 
-  // async delete(userId: string, landmarkId: number): Promise<void> {
-  //   console.log("id: ", landmarkId);
-  //   const bookmark = await this.bookmarksRepository.findOne(landmarkId);
+  async delete(
+    userId: string,
+    landmarkId: number,
+  ): Promise<null | MessageResponseDto> {
+    console.log("id: ", landmarkId);
+    const bookmark = await this.bookmarksRepository.findBookmarkById(
+      userId,
+      landmarkId,
+    );
 
-  //   if (!bookmark || bookmark.userId !== userId) {
-  //     throw new NotFoundException(
-  //       `Bookmark with id ${landmarkId} not found or not owned by the current user`,
-  //     );
-  //   }
-  //   await this.bookmarksRepository.deleteByLandmarkId(userId, landmarkId);
-  // }
+    if (!bookmark) {
+      throw new NotFoundException(`Bookmark with id ${landmarkId} not found`);
+    }
+
+    if (bookmark.userId !== userId) {
+      throw new UnauthorizedException(`Not owned by the current user`);
+    }
+    await this.bookmarksRepository.delete(bookmark.id);
+
+    return { message: `landmarkId: ${landmarkId} deleted successfully` };
+  }
 }

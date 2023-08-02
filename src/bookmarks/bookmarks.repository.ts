@@ -11,9 +11,38 @@ import {
 } from "./dto/bookmark.response.dto";
 import { plainToClass } from "class-transformer";
 
+type QueriedBookmark = {
+  id: number;
+  userId: string;
+  landmark: {
+    id: number;
+    area: {
+      siDo: string;
+    };
+    imagePath: string;
+    name: string;
+    address: string;
+  };
+  createdAt: Date;
+};
 @Injectable()
 export class BookmarksRepository {
   constructor(private prisma: PrismaService) {}
+
+  private toResponseBookmarkDto(
+    bookmark: QueriedBookmark,
+  ): ResponseBookmarkDto {
+    return {
+      id: bookmark.id,
+      userId: bookmark.userId,
+      landmarkId: bookmark.landmark.id,
+      siDo: bookmark.landmark.area.siDo,
+      imagePath: bookmark.landmark.imagePath,
+      name: bookmark.landmark.name,
+      address: bookmark.landmark.address,
+      createdAt: bookmark.createdAt,
+    };
+  }
 
   async findBookmarkByUserId(userId: string) {
     const userExists = await this.prisma.user.findUnique({
@@ -38,7 +67,10 @@ export class BookmarksRepository {
     return landmarkExists;
   }
 
-  async findBookmarkById(userId: string, landmarkId: number) {
+  async findBookmarkById(
+    userId: string,
+    landmarkId: number,
+  ): Promise<Bookmark> {
     console.log(`userId: ${userId}, landmarkId: ${landmarkId}`);
     const bookmarkExists = await this.prisma.bookmark.findFirst({
       where: {
@@ -72,16 +104,7 @@ export class BookmarksRepository {
       },
     });
 
-    return {
-      id: createdBookmark.id,
-      userId: createdBookmark.userId,
-      landmarkId: createdBookmark.landmark.id,
-      siDo: createdBookmark.landmark.area.siGu, // 예: area에 siGu 필드가 있다고 가정
-      imagePath: createdBookmark.landmark.imagePath,
-      name: createdBookmark.landmark.name,
-      address: createdBookmark.landmark.address,
-      createdAt: createdBookmark.createdAt,
-    };
+    return this.toResponseBookmarkDto(createdBookmark);
   }
 
   async findManyByUser(
@@ -106,23 +129,14 @@ export class BookmarksRepository {
       },
     });
 
-    // 시/도별로 그룹화
+    // 구별로 그룹화
     const groupedBySiDo: Record<string, ResponseBookmarkDto[]> = {};
     for (const bookmark of bookmarks) {
       const siDo = bookmark.landmark.area.siDo;
       if (!groupedBySiDo[siDo]) {
         groupedBySiDo[siDo] = [];
       }
-      groupedBySiDo[siDo].push({
-        id: bookmark.id,
-        userId: bookmark.userId,
-        landmarkId: bookmark.landmark.id,
-        siDo: bookmark.landmark.area.siDo,
-        imagePath: bookmark.landmark.imagePath,
-        name: bookmark.landmark.name,
-        address: bookmark.landmark.address,
-        createdAt: bookmark.createdAt,
-      });
+      groupedBySiDo[siDo].push(this.toResponseBookmarkDto(bookmark));
     }
 
     return groupedBySiDo;
@@ -154,20 +168,20 @@ export class BookmarksRepository {
     return bookmark;
   }
 
-  async deleteByLandmarkId(userId: string, landmarkId: number): Promise<void> {
-    const bookmark = await this.prisma.bookmark.findFirst({
-      where: {
-        userId,
-        landmarkId,
-      },
-    });
+  // async deleteByLandmarkId(userId: string, landmarkId: number): Promise<void> {
+  //   const bookmark = await this.prisma.bookmark.findFirst({
+  //     where: {
+  //       userId,
+  //       landmarkId,
+  //     },
+  //   });
 
-    if (bookmark) {
-      await this.prisma.bookmark.delete({
-        where: { id: bookmark.id },
-      });
-    }
-  }
+  //   if (bookmark) {
+  //     await this.prisma.bookmark.delete({
+  //       where: { id: bookmark.id },
+  //     });
+  //   }
+  // }
 
   async delete(id: number): Promise<void> {
     await this.prisma.bookmark.delete({
