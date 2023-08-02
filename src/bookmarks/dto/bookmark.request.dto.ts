@@ -1,6 +1,15 @@
 import { IsNumber, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
+class ToggleBookmarkDto {
+  @IsNumber()
+  @ApiProperty({
+    description: "랜드마크 아이디",
+    example: 1,
+  })
+  landmarkId: number;
+}
+
 class CreateBookmarkDto {
   @IsNumber()
   @ApiProperty({
@@ -10,17 +19,17 @@ class CreateBookmarkDto {
   landmarkId: number;
 }
 
-class DeleteBookmarkDto {
-  @IsNumber()
+class FindBookmarkDto {
+  @IsString()
   @ApiProperty({
     description: "랜드마크 아이디",
     example: 1,
   })
-  landmarkId: number;
+  userId: string;
 
-  constructor(landmarkId: number) {
-    this.landmarkId = landmarkId;
+  constructor(userId: string) {
+    this.userId = userId;
   }
 }
 
-export { CreateBookmarkDto, DeleteBookmarkDto };
+export { ToggleBookmarkDto, FindBookmarkDto, CreateBookmarkDto };

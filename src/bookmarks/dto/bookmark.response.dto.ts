@@ -11,16 +11,23 @@ class ResponseBookmarkDto {
   @Expose()
   @ApiProperty({
     example: "6230c68b-3e08-484d-818b-5bfa966d5d77",
-    description: "북마크의 유저ID",
+    description: "북마크 유저ID",
   })
   userId: string;
+
+  @Expose()
+  @ApiProperty({
+    example: 1,
+    description: "랜드마크 ID",
+  })
+  landmarkId: number;
 
   @Expose()
   @ApiProperty({
     example: "강남",
     description: "자치구",
   })
-  siGu: string;
+  siDo: string;
 
   @Expose()
   @ApiProperty({
@@ -68,4 +75,3 @@ class SiDoBookmarkListDto {
 }
 
 export { ResponseBookmarkDto, SiDoBookmarkListDto };
-
