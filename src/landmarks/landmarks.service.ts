@@ -16,26 +16,27 @@ export class LandmarkService {
   ) {}
 
   //해당 랜드마크 정보 추출 (이름으로 검색)
-  async getLandmarkByName(
-    getLandmarkDto: GetLandmarkDto,
-  ): Promise<LandmarkResponseDto> {
+  async getLandmarkByName(getLandmarkDto: GetLandmarkDto): Promise<LandmarkResponseDto> {
     const landmark = await this.landmarkRepo.findLandmarkByName(getLandmarkDto);
     if (!landmark) {
       throw new Error("Landmark not found");
     }
-    this.s3Service.ensureImageIsPublic(landmark.fileName);
+    // S3 Public권한 주기, imagePath 설정하기
+    await this.s3Service.ensureImageIsPublic(landmark.fileName);
     landmark.imagePath = getImagePath(this.configService, landmark.imagePath);
+
+    // DB imagePath 업데이트
+    if (landmark.name == landmark.imagePath) {
+      const updateLandmark = await this.landmarkRepo.updateImagePath(landmark.name, landmark.imagePath);
+      return updateLandmark;
+    }
 
     return plainToClass(LandmarkResponseDto, landmark);
   }
 
   //주변 랜드마크 정보 추출 (지역ID로 검색 - 상위 5개)
-  async getNearByLandmarksByArea(
-    areaId: number,
-  ): Promise<LandmarkResponseDto[]> {
-    const landmarks = await this.landmarkRepo.getNearByLandmarksByAreaId(
-      areaId,
-    );
+  async getNearByLandmarksByArea(areaId: number): Promise<LandmarkResponseDto[]> {
+    const landmarks = await this.landmarkRepo.getNearByLandmarksByAreaId(areaId);
     if (!landmarks) {
       throw new Error("Landmark not found");
     }
@@ -44,10 +45,13 @@ export class LandmarkService {
     const updatedLandmarksPromises = landmarks.map(async (landmark) => {
       try {
         await this.s3Service.ensureImageIsPublic(landmark.fileName); // s3 이미지 ACL 설정 (public)
-        landmark.imagePath = getImagePath(
-          this.configService,
-          landmark.imagePath,
-        ); // 이미지 경로 업데이트
+        landmark.imagePath = getImagePath(this.configService, landmark.imagePath); // 이미지 경로 업데이트
+
+        // DB imagePath 업데이트
+        if (landmark.name == landmark.imagePath) {
+          const updateLandmark = await this.landmarkRepo.updateImagePath(landmark.name, landmark.imagePath);
+          return updateLandmark;
+        }
         return landmark;
       } catch (error) {
         console.error(error);
@@ -58,8 +62,6 @@ export class LandmarkService {
     const updatedLandmarks = await Promise.all(updatedLandmarksPromises);
     const validLandmarks = updatedLandmarks.filter(Boolean);
 
-    return validLandmarks.map((landmark) =>
-      plainToClass(LandmarkResponseDto, landmark),
-    );
+    return validLandmarks.map((landmark) => plainToClass(LandmarkResponseDto, landmark));
   }
 }

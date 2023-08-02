@@ -1,15 +1,7 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Bookmark } from "@prisma/client";
 import { PrismaService } from "src/prisma.service";
-import {
-  ResponseBookmarkDto,
-  SiDoBookmarkListDto,
-} from "./dto/bookmark.response.dto";
-import { plainToClass } from "class-transformer";
+import { ResponseBookmarkDto } from "./dto/bookmark.response.dto";
 
 type QueriedBookmark = {
   id: number;
@@ -168,6 +160,11 @@ export class BookmarksRepository {
     return this.toResponseBookmarkDto(bookmark);
   }
 
+  async delete(id: number): Promise<void> {
+    await this.prisma.bookmark.delete({
+      where: { id },
+    });
+  }
   // async deleteByLandmarkId(userId: string, landmarkId: number): Promise<void> {
   //   const bookmark = await this.prisma.bookmark.findFirst({
   //     where: {
@@ -179,23 +176,6 @@ export class BookmarksRepository {
   //   if (bookmark) {
   //     await this.prisma.bookmark.delete({
   //       where: { id: bookmark.id },
-  //     });
-  //   }
-  // }
-
-  async delete(id: number): Promise<void> {
-    await this.prisma.bookmark.delete({
-      where: { id },
-    });
-  }
-
-  // const bookmark = await this.prisma.bookmark.findFirst({
-  //   where: { id },
-  // });
-
-  //   if (bookmark) {
-  //     await this.prisma.bookmark.delete({
-  //       where: { id },
   //     });
   //   }
   // }
