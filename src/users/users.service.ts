@@ -20,8 +20,10 @@ export class UsersService{
             throw new Error;
         }
 
+        const bookmarkCounts = await this.userRepo.countBookmarksBySiDo(id);
+        console.log(bookmarkCounts)
         
-        return plainToClass(myPageResponseDto, user);
+        return plainToClass(myPageResponseDto, bookmarkCounts);
     }
 
 
