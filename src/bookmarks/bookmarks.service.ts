@@ -67,13 +67,13 @@ export class BookmarksService {
     }));
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<ResponseBookmarkDto> {
     const bookmark = await this.bookmarksRepository.findOne(id);
     console.log("bookmark: ", bookmark);
     if (!bookmark) {
       throw new NotFoundException(`Bookmark with id ${id} not found`);
     }
-    return bookmark;
+    return plainToClass(ResponseBookmarkDto, bookmark);
   }
 
   async create(
@@ -126,5 +126,21 @@ export class BookmarksService {
     await this.bookmarksRepository.delete(bookmark.id);
 
     return { message: `landmarkId: ${landmarkId} deleted successfully` };
+  }
+
+  async findOneByUserAndLandmark(
+    userId: string,
+    landmarkId: number,
+  ): Promise<ResponseBookmarkDto> {
+    const bookmark = await this.bookmarksRepository.findBookmarkById(
+      userId,
+      landmarkId,
+    );
+    if (!bookmark) {
+      throw new NotFoundException(
+        `Bookmark with user id ${userId} and landmark id ${landmarkId} not found`,
+      );
+    }
+    return plainToClass(ResponseBookmarkDto, bookmark);
   }
 }
