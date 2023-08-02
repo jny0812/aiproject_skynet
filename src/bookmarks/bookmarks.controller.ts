@@ -14,18 +14,11 @@ import {
 } from "@nestjs/common";
 import { BookmarksService } from "./bookmarks.service";
 
-import {
-  ToggleBookmarkDto,
-  FindBookmarkDto,
-  CreateBookmarkDto,
-} from "./dto/bookmark.request.dto";
+import { ToggleBookmarkDto, FindBookmarkDto, CreateBookmarkDto } from "./dto/bookmark.request.dto";
 import { JwtAuthGuard } from "src/auth/authentication/guards/jwt.guard";
 import { MessageResponseDto } from "src/common/dto/message.dto";
 import { ApiTags } from "@nestjs/swagger";
-import {
-  ResponseBookmarkDto,
-  SiDoBookmarkListDto,
-} from "./dto/bookmark.response.dto";
+import { ResponseBookmarkDto, SiDoBookmarkListDto } from "./dto/bookmark.response.dto";
 
 @ApiTags("bookmarks")
 @UseGuards(JwtAuthGuard)
@@ -45,9 +38,7 @@ export class BookmarksController {
 
   //지역구별 리스트
   @Get("user/:userId")
-  async findBookmarksByUser(
-    @Param("userId") findBookmarkDto: FindBookmarkDto,
-  ): Promise<SiDoBookmarkListDto[]> {
+  async findBookmarksByUser(@Param("userId") findBookmarkDto: FindBookmarkDto): Promise<SiDoBookmarkListDto[]> {
     const userId = findBookmarkDto.userId;
     return this.bookmarksService.findBookmarksByUser(userId);
   }
@@ -60,7 +51,6 @@ export class BookmarksController {
   }
 
   //유저의 랜드마크 아이디로 조회
-
   @Post()
   async createBookmark(
     @Request() req: any,

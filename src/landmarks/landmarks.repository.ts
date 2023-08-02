@@ -37,4 +37,11 @@ export class LandmarkRepository {
 
     return landmarks.map((landmark) => plainToClass(LandmarkEntity, landmark));
   }
+
+  async updateImagePath(name: string, imagePath: string): Promise<LandmarkEntity> {
+    return await this.prisma.landmark.update({
+      where: { name },
+      data: { imagePath },
+    });
+  }
 }
