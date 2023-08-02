@@ -70,7 +70,7 @@ export class BookmarksRepository {
   async findBookmarkById(
     userId: string,
     landmarkId: number,
-  ): Promise<Bookmark> {
+  ): Promise<Bookmark | null> {
     console.log(`userId: ${userId}, landmarkId: ${landmarkId}`);
     const bookmarkExists = await this.prisma.bookmark.findFirst({
       where: {
@@ -142,9 +142,9 @@ export class BookmarksRepository {
     return groupedBySiDo;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<ResponseBookmarkDto> {
     const bookmark = await this.prisma.bookmark.findUnique({
-      where: { id: +id },
+      where: { id: id },
       select: {
         id: true,
         createdAt: true,
@@ -157,7 +157,7 @@ export class BookmarksRepository {
             imagePath: true,
             area: {
               select: {
-                id: true,
+                siDo: true,
               },
             },
           },
@@ -165,7 +165,7 @@ export class BookmarksRepository {
       },
     });
 
-    return bookmark;
+    return this.toResponseBookmarkDto(bookmark);
   }
 
   // async deleteByLandmarkId(userId: string, landmarkId: number): Promise<void> {
