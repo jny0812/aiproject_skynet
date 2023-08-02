@@ -35,49 +35,88 @@ export class UsersRepository {
         });
   }
 
-   //마이페이지 - 북마크 리스트
-   //1. user_id > 랜드마크 아이디 
-  // async getBookmarksByUserId (id: string): Promise<Bookmark | null> {
-  //   const bookmarkList = await this.prisma.bookmark.findMany({
-
-
-
-  //   })
-  // }
-  async countBookmarksBySiDo(id: string) : Promise<{ [siDo: string]: number } | null>{
-    try {
-      const bookmarks = await this.prisma.bookmark.findMany({
-        where: {
-          userId : id,
-        },
-        select: {
-          landmark: {
-            select: {
-              name: true,
-              area: {
-                select: {
-                  siDo: true,
-                },
-              },
-            },
-          },
-        },
-      });
+  //마이페이지 - 북마크 리스트
+  // async countBookmarksBySiDo(id: string) : Promise<{ [siDo: string]: number } | null>{
+  //   try {
+  //     const bookmarks = await this.prisma.bookmark.findMany({
+  //       where: {
+  //         userId : id,
+  //       },
+  //       select: {
+  //         landmark: {
+  //           select: {
+  //             name: true,
+  //             area: {
+  //               select: {
+  //                 siDo: true,
+  //               },
+  //             },
+  //           },
+  //         },
+  //       },
+  //     });
   
-      // Group by siDo and count the bookmarks
-      const siDoCounts: { [siDo: string]: number } = {};
-      for (const bookmark of bookmarks) {
-        const siDo = bookmark.landmark.area.siDo;
-        siDoCounts[siDo] = (siDoCounts[siDo] || 0) + 1;
-      }
+  //     // Group by siDo and count the bookmarks
+  //     const siDoCounts: { [siDo: string]: number } = {};
+  //     for (const bookmark of bookmarks) {
+  //       const siDo = bookmark.landmark.area.siDo;
+  //       siDoCounts[siDo] = (siDoCounts[siDo] || 0) + 1;
+  //     }
     
-      return siDoCounts;
+  //     return siDoCounts;
 
-    } 
-    catch (error) {
-      throw new Error(`Error counting bookmarks: ${error.message}`);
+  //   } 
+  //   catch (error) {
+  //     throw new Error(`Error counting bookmarks: ${error.message}`);
+  //   }
+  // }
+
+async countBookmarksBySiDo(id: string): Promise<{ [siDo: string]: { imagePath: string, count: number } } | null> {
+    try {
+        const bookmarks = await this.prisma.bookmark.findMany({
+            where: {
+                userId: id,
+            },
+            include: {
+                landmark: {
+                    select: {
+                        area: {
+                            select: {
+                                siDo: true,
+                            },
+                        },
+                        imagePath: true, // Include imagePath here from landmark
+                    },
+                },
+            },
+        });
+
+        // Calculate bookmark counts by siDo
+        const siDoCounts: { [siDo: string]: { imagePath: string, count: number } } = {};
+        for (const bookmark of bookmarks) {
+            const siDo = bookmark.landmark.area.siDo;
+            
+            if (!siDoCounts[siDo]) {
+                siDoCounts[siDo] = {
+                    imagePath: bookmark.landmark.imagePath, // Access imagePath from landmark
+                    count: 1,
+                };
+            } else {
+                siDoCounts[siDo].count += 1;
+            }
+        }
+
+        return siDoCounts;
+
+    } catch (error) {
+        throw new Error(`Error counting bookmarks: ${error.message}`);
     }
-  }
+}
+
+  
+
+
+
   
 
  

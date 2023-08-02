@@ -39,8 +39,18 @@ class myPageResponseDto {
   @Exclude()
   deletedAt: Date;
 
-  @ApiProperty({ type: [BookmarksEntity] })
-  bookmarks: BookmarksEntity[];
+  @ApiProperty()
+  bookmarks: myPageBookmarkResponseDto[]
 }
 
-export  {myPageResponseDto};
+class myPageBookmarkResponseDto{
+
+  @ApiProperty()
+  landmarkName: string;
+
+  @ApiProperty()
+  counts: number;
+
+}
+
+export  {myPageResponseDto, myPageBookmarkResponseDto};

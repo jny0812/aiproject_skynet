@@ -37,6 +37,8 @@ export class LandmarkController {
       landmark.areaId,
     );
 
+    //북마크 0 
+
     return { landmark, nearByLandmarks };
   }
 
