@@ -6,6 +6,11 @@ import {
 import { Bookmark } from "@prisma/client";
 import { PrismaService } from "src/prisma.service";
 import { CreateBookmarkDto } from "./dto/bookmark.request.dto";
+import {
+  ResponseBookmarkDto,
+  SiDoBookmarkListDto,
+} from "./dto/bookmark.response.dto";
+import { plainToClass } from "class-transformer";
 
 @Injectable()
 export class BookmarksRepository {
@@ -59,6 +64,69 @@ export class BookmarksRepository {
     });
   }
 
+  async findManyByUser(userId: string): Promise<Record<string, Bookmark[]>> {
+    const bookmarks = await this.prisma.bookmark.findMany({
+      where: { userId: userId },
+      include: {
+        landmark: {
+          select: {
+            address: true,
+            name: true,
+            imagePath: true,
+            area: {
+              select: {
+                siDo: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // 시/구별로 그룹화
+    const groupedBySiDo: Record<string, Bookmark[]> = {};
+    for (const bookmark of bookmarks) {
+      const siDo = bookmark.landmark.area.siDo; // 가정: area에 siDo 필드가 있다.
+      if (!groupedBySiDo[siDo]) {
+        groupedBySiDo[siDo] = [];
+      }
+      groupedBySiDo[siDo].push(bookmark);
+    }
+
+    return groupedBySiDo;
+  }
+
+  async findOne(id: number) {
+    const bookmark = await this.prisma.bookmark.findUnique({
+      where: { id: id },
+      select: {
+        id: true,
+        createdAt: true,
+        userId: true,
+        landmark: {
+          select: {
+            address: true,
+            name: true,
+            imagePath: true,
+            area: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return bookmark;
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.prisma.bookmark.delete({
+      where: { id },
+    });
+  }
+
   // async findAll(): Promise<Bookmark[]> {
   //   return this.prisma.bookmark.findMany({
   //     where: { id },
@@ -76,87 +144,4 @@ export class BookmarksRepository {
   //     },
   //   });
   // }
-
-  async findManyByUserAndArea(userId: string, areaId: number): Promise<Bookmark[]>{
-    console.log(`userId: ${userId}, areaId: ${areaId}`);
-    console.log('typeof areaId: ',typeof areaId);
-    return this.prisma.bookmark.findMany({
-      where: {
-        userId: userId,
-        landmark: {
-          area: {
-            id: areaId,
-          },
-        },
-      },
-      include: {
-        landmark: {
-          select: {
-            address: true,
-            name: true,
-            imagePath: true,
-            area: {
-              select: {
-                id: true,  // Change 'areaId' to 'id'
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-  
-  
-  async findOne(id: number){
-    const bookmark = await this.prisma.bookmark.findUnique({
-      where: { id: +id },
-      select: {
-        id: true,
-        createdAt: true,
-        userId: true,  // Add this line
-        landmark: {
-          select: {
-            address: true,
-            name: true,
-            imagePath: true,
-            area: {
-              select: {
-                id: true,  // Change 'areaId' to 'id'
-              },
-            },
-          },
-        },
-      },
-    });
-  
-    return bookmark;
-  }
-
-  // async findOne(id: number): Promise<Bookmark> {
-  //   const bookmark = await this.prisma.bookmark.findUnique({
-  //     where: { id },
-  //     include: {
-  //       landmark: {
-  //         include: {
-  //           area: true,
-  //         },
-  //         select: {
-  //           address: true,
-  //           name: true,
-  //           imagePath: true,
-  //         },
-  //       },
-  //     },
-  //   });
-  //   if (!bookmark) {
-  //     throw new NotFoundException("Bookmark not found");
-  //   }
-  //   return bookmark;
-  // }
-
-  async remove(id: number): Promise<void> {
-    await this.prisma.bookmark.delete({
-      where: { id },
-    });
-  }
 }
