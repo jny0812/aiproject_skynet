@@ -14,9 +14,9 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
     const request = context.switchToHttp().getRequest();
 
     // Authorization 헤더가 있는지 확인
-    if (!request.headers.authorization) {
-      throw new UnauthorizedException("Authorization 헤더가 없습니다");
-    }
+    // if (!request.headers.authorization) {
+    //   throw new UnauthorizedException("Authorization 헤더가 없습니다");
+    // }
 
     //Content-Type 헤더가 올바른지 확인
     if (request.headers["content-type"] !== "application/json") {

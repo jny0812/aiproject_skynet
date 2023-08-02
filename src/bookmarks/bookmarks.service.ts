@@ -14,74 +14,81 @@ import { Bookmark, User } from "@prisma/client";
 import { BookmarksRepository } from "./bookmarks.repository";
 //import { ResponseBookmarkDto } from "./dto/bookmark.response.dto";
 import { plainToClass } from "class-transformer";
-import { ResponseBookmarkDto } from "./dto/bookmark.response.dto";
+import {
+  ResponseBookmarkDto,
+  SiDoBookmarkListDto,
+} from "./dto/bookmark.response.dto";
+import { MessageResponseDto } from "src/common/dto/message.dto";
 
 @Injectable()
 export class BookmarksService {
   constructor(private bookmarksRepository: BookmarksRepository) {}
 
-  async create(userId: string, landmarkId: number): Promise<ResponseBookmarkDto> {
-    //const userId = user.id;
-    //createBookmarkDto.landmarkId = createBookmarkDto.landmarkId;
-    //const landmarkId = createBookmarkDto.landmarkId;
+  async toggleBookmark(
+    userId: string,
+    landmarkId: number,
+  ): Promise<ResponseBookmarkDto | MessageResponseDto> {
     try {
-      await this.bookmarksRepository.findBookmarkByUserId(userId);
-
-      await this.bookmarksRepository.findBookmarkByLandmarkId(landmarkId);
-
-      const findBookmark = await this.bookmarksRepository.findBookmarkById(
+      // 기존 북마크 찾기
+      const existingBookmark = await this.bookmarksRepository.findBookmarkById(
         userId,
         landmarkId,
       );
 
-      if (findBookmark) {
-        throw new ConflictException(
-          `Bookmark for user ${userId} and landmark ${landmarkId} already exists`,
+      if (existingBookmark) {
+        // 북마크가 이미 존재하면 삭제
+        await this.bookmarksRepository.delete(existingBookmark.id);
+        return {
+          message: `Bookmark ${existingBookmark.id} deleted successfully`,
+        };
+      } else {
+        // 북마크가 없으면 생성
+        const landmark =
+          await this.bookmarksRepository.findBookmarkByLandmarkId(landmarkId);
+
+        const bookmark = await this.bookmarksRepository.createBookmark(
+          userId,
+          landmarkId,
         );
+        return plainToClass(ResponseBookmarkDto, bookmark);
       }
-
-      const createBookmark = await this.bookmarksRepository.createBookmark(
-        userId,
-        landmarkId,
-      );
-
-      return plainToClass(ResponseBookmarkDto, createBookmark);
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  // async findAll(): Promise<Bookmark[]> {
-  //   return this.bookmarksRepository.findAll();
-  // }
-
-  async findBookmarksByUserAndArea(userId: string, areaId: number): Promise<Bookmark[]>{
-    const bookmark = this.bookmarksRepository.findManyByUserAndArea(userId, areaId);
-    if (!bookmark) {
-      throw new NotFoundException(`Bookmark with id ${areaId} not found`);
+  async findBookmarksByUser(userId: string): Promise<SiDoBookmarkListDto[]> {
+    const bookmarks = await this.bookmarksRepository.findManyByUser(userId);
+    if (!bookmarks) {
+      throw new NotFoundException(`Bookmarks with user id ${userId} not found`);
     }
-    return bookmark;
+    return Object.entries(bookmarks).map(([siDo, bookmarksList]) => ({
+      siDo,
+      bookmarks: bookmarksList.map((bookmark) =>
+        plainToClass(ResponseBookmarkDto, bookmark),
+      ),
+    }));
   }
 
   async findOne(id: number) {
     const bookmark = await this.bookmarksRepository.findOne(id);
-    console.log('bookmark: ',bookmark);
+    console.log("bookmark: ", bookmark);
     if (!bookmark) {
       throw new NotFoundException(`Bookmark with id ${id} not found`);
     }
     return bookmark;
   }
 
-  async remove(userId: string, id: number): Promise<void> {
-    console.log("id: ", id);
-    const bookmark = await this.bookmarksRepository.findOne(id);
-    
-    if (!bookmark || bookmark.userId !== userId) {
-      throw new NotFoundException(
-        `Bookmark with id ${id} not found or not owned by the current user`,
-      );
-    }
-    await this.bookmarksRepository.remove(id);
-  }
+  // async delete(userId: string, id: number): Promise<void> {
+  //   console.log("id: ", id);
+  //   const bookmark = await this.bookmarksRepository.findOne(id);
+
+  //   if (!bookmark || bookmark.userId !== userId) {
+  //     throw new NotFoundException(
+  //       `Bookmark with id ${id} not found or not owned by the current user`,
+  //     );
+  //   }
+  //   await this.bookmarksRepository.delete(id);
+  // }
 }

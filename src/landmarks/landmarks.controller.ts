@@ -40,7 +40,6 @@ export class LandmarkController {
     return { landmark, nearByLandmarks };
   }
 
-
   // @Get(":name/:userId")
   // @ApiParam({
   //   name: "name",
