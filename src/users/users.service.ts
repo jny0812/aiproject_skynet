@@ -3,7 +3,7 @@ import { S3Service } from 'src/common/s3/s3.service';
 import { UsersRepository } from './users.repository';
 import { UsersEntity } from './users.entity';
 import { UsersRequestDto } from './dto/users.request.dto';
-import { myPageResponseDto } from './dto/users.response.dto';
+import { myPageResponseDto,myPageBookmarkResponseDto } from './dto/users.response.dto';
 import { plainToClass } from 'class-transformer';
 
 @Injectable()
@@ -20,10 +20,16 @@ export class UsersService{
             throw new Error;
         }
 
+        //북마크 리스트
         const bookmarkCounts = await this.userRepo.countBookmarksBySiDo(id);
-        console.log(bookmarkCounts)
+
+        const myPageResponse = plainToClass(myPageResponseDto, {
+          ...user,
+          bookmarkCounts,
+      });
+
         
-        return plainToClass(myPageResponseDto, bookmarkCounts);
+        return myPageResponse
     }
 
 
