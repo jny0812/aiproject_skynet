@@ -5,7 +5,6 @@ import {
 } from "@nestjs/common";
 import { Bookmark } from "@prisma/client";
 import { PrismaService } from "src/prisma.service";
-import { CreateBookmarkDto } from "./dto/bookmark.request.dto";
 import {
   ResponseBookmarkDto,
   SiDoBookmarkListDto,
@@ -51,8 +50,11 @@ export class BookmarksRepository {
     return bookmarkExists;
   }
 
-  async createBookmark(userId: string, landmarkId: number) {
-    return await this.prisma.bookmark.create({
+  async createBookmark(
+    userId: string,
+    landmarkId: number,
+  ): Promise<ResponseBookmarkDto> {
+    const createdBookmark = await this.prisma.bookmark.create({
       data: {
         user: {
           connect: { id: userId },
@@ -61,15 +63,36 @@ export class BookmarksRepository {
           connect: { id: landmarkId },
         },
       },
+      include: {
+        landmark: {
+          include: {
+            area: true,
+          },
+        },
+      },
     });
+
+    return {
+      id: createdBookmark.id,
+      userId: createdBookmark.userId,
+      landmarkId: createdBookmark.landmark.id,
+      siDo: createdBookmark.landmark.area.siGu, // 예: area에 siGu 필드가 있다고 가정
+      imagePath: createdBookmark.landmark.imagePath,
+      name: createdBookmark.landmark.name,
+      address: createdBookmark.landmark.address,
+      createdAt: createdBookmark.createdAt,
+    };
   }
 
-  async findManyByUser(userId: string): Promise<Record<string, Bookmark[]>> {
+  async findManyByUser(
+    userId: string,
+  ): Promise<Record<string, ResponseBookmarkDto[]>> {
     const bookmarks = await this.prisma.bookmark.findMany({
       where: { userId: userId },
       include: {
         landmark: {
           select: {
+            id: true,
             address: true,
             name: true,
             imagePath: true,
@@ -83,14 +106,23 @@ export class BookmarksRepository {
       },
     });
 
-    // 시/구별로 그룹화
-    const groupedBySiDo: Record<string, Bookmark[]> = {};
+    // 시/도별로 그룹화
+    const groupedBySiDo: Record<string, ResponseBookmarkDto[]> = {};
     for (const bookmark of bookmarks) {
-      const siDo = bookmark.landmark.area.siDo; // 가정: area에 siDo 필드가 있다.
+      const siDo = bookmark.landmark.area.siDo;
       if (!groupedBySiDo[siDo]) {
         groupedBySiDo[siDo] = [];
       }
-      groupedBySiDo[siDo].push(bookmark);
+      groupedBySiDo[siDo].push({
+        id: bookmark.id,
+        userId: bookmark.userId,
+        landmarkId: bookmark.landmark.id,
+        siDo: bookmark.landmark.area.siDo,
+        imagePath: bookmark.landmark.imagePath,
+        name: bookmark.landmark.name,
+        address: bookmark.landmark.address,
+        createdAt: bookmark.createdAt,
+      });
     }
 
     return groupedBySiDo;
@@ -98,13 +130,14 @@ export class BookmarksRepository {
 
   async findOne(id: number) {
     const bookmark = await this.prisma.bookmark.findUnique({
-      where: { id: id },
+      where: { id: +id },
       select: {
         id: true,
         createdAt: true,
         userId: true,
         landmark: {
           select: {
+            id: true,
             address: true,
             name: true,
             imagePath: true,
@@ -121,11 +154,37 @@ export class BookmarksRepository {
     return bookmark;
   }
 
+  async deleteByLandmarkId(userId: string, landmarkId: number): Promise<void> {
+    const bookmark = await this.prisma.bookmark.findFirst({
+      where: {
+        userId,
+        landmarkId,
+      },
+    });
+
+    if (bookmark) {
+      await this.prisma.bookmark.delete({
+        where: { id: bookmark.id },
+      });
+    }
+  }
+
   async delete(id: number): Promise<void> {
     await this.prisma.bookmark.delete({
       where: { id },
     });
   }
+
+  // const bookmark = await this.prisma.bookmark.findFirst({
+  //   where: { id },
+  // });
+
+  //   if (bookmark) {
+  //     await this.prisma.bookmark.delete({
+  //       where: { id },
+  //     });
+  //   }
+  // }
 
   // async findAll(): Promise<Bookmark[]> {
   //   return this.prisma.bookmark.findMany({
@@ -134,6 +193,7 @@ export class BookmarksRepository {
   //       landmark: {
   //         include: {
   //           area: true,
+  //           id: true,
   //         },
   //         select: {
   //           address: true,

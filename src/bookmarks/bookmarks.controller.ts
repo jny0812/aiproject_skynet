@@ -15,13 +15,12 @@ import {
 import { BookmarksService } from "./bookmarks.service";
 
 import {
+  ToggleBookmarkDto,
+  FindBookmarkDto,
   CreateBookmarkDto,
-  DeleteBookmarkDto,
 } from "./dto/bookmark.request.dto";
-import { AuthGuard } from "@nestjs/passport";
 import { JwtAuthGuard } from "src/auth/authentication/guards/jwt.guard";
 import { MessageResponseDto } from "src/common/dto/message.dto";
-import { Bookmark } from "@prisma/client";
 import { ApiTags } from "@nestjs/swagger";
 import {
   ResponseBookmarkDto,
@@ -37,18 +36,19 @@ export class BookmarksController {
   @Post("toggle")
   toggleBookmark(
     @Request() req: any,
-    @Body("landmarkId") landmarkId: number,
+    @Body(ValidationPipe) toggleBookmarkDto: ToggleBookmarkDto,
   ): Promise<ResponseBookmarkDto | MessageResponseDto> {
     const userId = req.user.id;
-    console.log("userId: ", userId);
+    const landmarkId = toggleBookmarkDto.landmarkId;
     return this.bookmarksService.toggleBookmark(userId, landmarkId);
   }
 
   //지역구별 리스트
   @Get("user/:userId")
   async findBookmarksByUser(
-    @Param("userId") userId: string,
+    @Param("userId") findBookmarkDto: FindBookmarkDto,
   ): Promise<SiDoBookmarkListDto[]> {
+    const userId = findBookmarkDto.userId;
     return this.bookmarksService.findBookmarksByUser(userId);
   }
 
@@ -57,4 +57,24 @@ export class BookmarksController {
     console.log("typeof id: ", typeof id);
     return this.bookmarksService.findOne(id);
   }
+
+  @Post()
+  async createBookmark(
+    @Request() req: any,
+    @Body(ValidationPipe) createBookmarkDto: CreateBookmarkDto,
+  ): Promise<ResponseBookmarkDto> {
+    const userId = req.user.id; // 로그인된 사용자의 ID
+    const landmarkId = createBookmarkDto.landmarkId;
+    return this.bookmarksService.create(userId, landmarkId);
+  }
+
+  // @Delete(":landmarkId")
+  // async deleteBookmark(
+  //   @Request() req: any,
+  //   @Param("landmarkId") landmarkId: number,
+  // ): Promise<void | MessageResponseDto> {
+  //   const userId = req.user.id; // 로그인된 사용자의 ID
+  //   this.bookmarksService.delete(userId, landmarkId);
+  //   return { message: `landmarkId: ${landmarkId} deleted successfully` };
+  // }
 }
