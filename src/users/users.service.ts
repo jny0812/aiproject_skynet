@@ -32,20 +32,35 @@ export class UsersService{
         return myPageResponse
     }
 
-
-  
+    // 마이 프로필 업데이트 (프로필 사진(profilePath) | 유저네임(userName) | 자기소개(description) )
     async updateUserInfo(
-        id: string,
-        profilePath: string,
-        userName: string,
-        description: string,
-      ): Promise<UsersEntity> {
-        const updatedUser = await this.userRepo.updateUserInfo(
-          id,
-          profilePath,
-          userName,
-          description,
-        );
-        return new UsersEntity(updatedUser);
+      id: string,
+      profilePath?: string,
+      userName?: string,
+      description?: string
+    ): Promise<myPageResponseDto> {
+      const data: { profilePath?: string; userName?: string; description?: string } = {};
+    
+      if (profilePath) {
+        data.profilePath = profilePath;
       }
+    
+      if (userName) {
+        data.userName = userName;
+      }
+    
+      if (description) {
+        data.description = description;
+      }
+    
+      const bookmarkCounts = await this.userRepo.countBookmarksBySiDo(id);
+      const updatedUser = await this.userRepo.updateUserInfo(id, data.profilePath, data.userName, data.description);
+      const updatedResponse = plainToClass(myPageResponseDto, {
+        ...updatedUser,
+        bookmarkCounts
+      });
+
+      return updatedResponse
+    }
+    
     }

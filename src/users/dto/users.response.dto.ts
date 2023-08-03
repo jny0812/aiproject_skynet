@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BookmarksEntity } from "src/bookmarks/bookmarks.entity";
 import { Exclude } from 'class-transformer';
 import { IsDate } from 'class-validator';
 
-
+//마이페이지 
 class myPageResponseDto {
 
   @ApiProperty()
@@ -43,6 +42,7 @@ class myPageResponseDto {
   bookmarks: myPageBookmarkResponseDto[]
 }
 
+//마이페이지 - 북마크 리스트
 class myPageBookmarkResponseDto{
 
   @ApiProperty()
@@ -52,5 +52,6 @@ class myPageBookmarkResponseDto{
   counts: number;
 
 }
+
 
 export  {myPageResponseDto, myPageBookmarkResponseDto};

@@ -20,23 +20,22 @@ export class UsersController {
         return this.usersService.getUserById(usersRequestDto.id);
     }
 
-    // @Get('bookmark/:id')
-    // async getUserByIdWithBookmarks(@Param('id') id: string): Promise<UsersEntity | null> {
-    //     return this.usersService.getUserByIdWithBookmarks(id);
-    // }
 
-
+    // 마이 프로필 업데이트 (프로필 사진(profilePath) | 유저네임(userName) | 자기소개(description) )
     @Patch(':id')
     async updateUserInfo(
         
         @Req() req: any,
-        @Param('id') id: string,
+        @Param() usersRequestDto: UsersRequestDto,
         @Body('profilePath') profilePath: string | null,
-        @Body('username') username: string | null,
+        @Body('userName') username: string | null,
         @Body('description') description: string | null,
-    ): Promise<UsersEntity>{
+    ): Promise<myPageResponseDto>{
+        if (usersRequestDto.id !== req.user.id){
+            throw new Error('수정할 수 있는 권한 없음.')
+        }
 
-        return this.usersService.updateUserInfo(id, profilePath, username, description);
+        return this.usersService.updateUserInfo(usersRequestDto.id, profilePath, username, description);
     }
 
 }
