@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { S3Service } from 'src/common/s3/s3.service';
 import { UsersRepository } from './users.repository';
-import { UsersEntity } from './users.entity';
-import { UsersRequestDto } from './dto/users.request.dto';
 import { myPageResponseDto,myPageBookmarkResponseDto } from './dto/users.response.dto';
 import { plainToClass } from 'class-transformer';
+import { MessageResponseDto } from 'src/app.dto';
 
 @Injectable()
 export class UsersService{
@@ -61,6 +60,15 @@ export class UsersService{
       });
 
       return updatedResponse
+    }
+
+
+    //계정 삭제
+    async deleteUser (id: string): Promise<MessageResponseDto> {
+        
+      await this.userRepo.deleteUser(id);
+
+      return { message: '계정을 성공적으로 삭제하였습니다.'}
     }
     
     }

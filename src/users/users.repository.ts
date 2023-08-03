@@ -12,7 +12,6 @@ export class UsersRepository {
   //아이디 조회
   getUserByUserName = async (userName: string): Promise<User | null> => {
     const result = await this.prisma.user.findUnique({ where: { userName } });
-
     return result;
   };
 
@@ -20,9 +19,11 @@ export class UsersRepository {
   createUser = async (
     user: Pick<User, "email" | "userName" | "password">,
   ): Promise<User> => {
+
     return await this.prisma.user.create({
       data: user,
     });
+    
   };
 
 
@@ -79,7 +80,6 @@ export class UsersRepository {
   }
 
 
-
   // 마이 프로필 업데이트 (프로필 사진(profilePath) | 유저네임(userName) | 자기소개(description) )
   async updateUserInfo(
     id: string,
@@ -105,4 +105,13 @@ export class UsersRepository {
       });
   }
 
+
+
+  //계정 삭제
+  async deleteUser(id: string) : Promise<void> {
+    await this.prisma.$transaction([
+      this.prisma.bookmark.deleteMany({ where: { userId: id } }),
+      this.prisma.user.deleteMany({ where: { id }}),
+    ]);
+  }
   }

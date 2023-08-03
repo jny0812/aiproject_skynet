@@ -32,7 +32,7 @@ export class AuthService {
       const hashedPassword = await this.security.hashPassword(user.password);
 
       //유저 등록
-      const createUser = await this.userRepository.createUser({
+      await this.userRepository.createUser({
         email: user.email,
         password: hashedPassword,
         userName: user.userName,
@@ -44,6 +44,8 @@ export class AuthService {
     }
   };
 
+
+  //로그인
   async login(
     loginRequestDto: LoginRequestDto,
   ): Promise<{ accessToken: string }> {
@@ -52,6 +54,7 @@ export class AuthService {
       // 유저 토큰 생성 ( Secret + Payload )
       const payload = { userName: user.userName };
       const accessToken = this.jwtService.sign(payload);
+     
       return { accessToken };
     } else {
       throw new UnauthorizedException("login failed");
