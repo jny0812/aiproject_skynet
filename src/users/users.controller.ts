@@ -1,12 +1,12 @@
 import { Controller, Get, Param, Patch, Body, UseGuards, Req, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { DeleteUserRequestDto, UsersRequestDto } from './dto/users.request.dto';
+import { UsersRequestDto } from './dto/users.request.dto';
 import { JwtAuthGuard } from 'src/auth/authentication/guards/jwt.guard';
 import { myPageResponseDto } from './dto/users.response.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import GetUserInfoResponse from 'src/docs/users/users.swagger';
 import { MessageResponse } from 'src/docs/global.swagger';
-import { MessageResponseDto } from 'src/app.dto';
+import { MessageResponseDto } from '../common/dto/message.dto'
 
 
 @UseGuards(JwtAuthGuard)

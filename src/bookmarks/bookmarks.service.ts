@@ -9,30 +9,37 @@ import { MessageResponseDto } from "src/common/dto/message.dto";
 export class BookmarksService {
   constructor(private bookmarksRepository: BookmarksRepository) {}
 
-  async toggleBookmark(userId: string, landmarkId: number): Promise<ResponseBookmarkDto | MessageResponseDto> {
-    try {
-      // 기존 북마크 찾기
-      const existingBookmark = await this.bookmarksRepository.findBookmarkById(userId, landmarkId);
+  //북마크 추가 
+  // async toggleBookmark(userId: string, landmarkId: number): Promise<ResponseBookmarkDto | MessageResponseDto> {
+  //   try {
+  //     // 기존 북마크 찾기
+  //     // const existingBookmark = await this.bookmarksRepository.findBookmarkById(userId, landmarkId);
 
-      if (existingBookmark) {
-        // 북마크가 이미 존재하면 삭제
-        await this.bookmarksRepository.delete(existingBookmark.id);
+  //     // if (existingBookmark) {
+     
+  //     //   await this.bookmarksRepository.delete(existingBookmark.id);
 
-        return {
-          message: `BookmarkId: ${existingBookmark.id} & landmarkId: ${landmarkId} deleted successfully`,
-        };
-      } else {
-        // 북마크가 없으면 생성
-        const landmark = await this.bookmarksRepository.findBookmarkByLandmarkId(landmarkId);
+  //     //   return {
+  //     //     message: `BookmarkId: ${existingBookmark.id} & landmarkId: ${landmarkId} deleted successfully`,
+  //     //   };
+  //     // } else {
+  //     //   // 북마크가 없으면 생성
+  //     //   const landmark = await this.bookmarksRepository.findBookmarkByLandmarkId(landmarkId);
 
-        const bookmark = await this.bookmarksRepository.createBookmark(userId, landmarkId);
-        return plainToClass(ResponseBookmarkDto, bookmark);
-      }
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+  //     //   const bookmark = await this.bookmarksRepository.createBookmark(userId, landmarkId);
+  //     //   return plainToClass(ResponseBookmarkDto, bookmark);
+  //     // }
+
+  //      //북마크가 이미 존재하면 status update | 없다면 insert
+  //      const result = await this.bookmarksRepository.upsertBookmark(userId, landmarkId)
+
+  //      return plainToClass(ResponseBookmarkDto, result);
+
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // }
 
   async findBookmarksByUser(userId: string): Promise<SiDoBookmarkListDto[]> {
     const bookmarks = await this.bookmarksRepository.findManyByUser(userId);

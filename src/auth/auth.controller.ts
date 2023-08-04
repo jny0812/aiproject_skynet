@@ -21,7 +21,6 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   //회원가입
-  @ApiResponse(AuthResponse)
   @HttpCode(201) //successfully created : 201
   @ApiOperation({ summary: "Register a new user" })
   @Post("/new")
@@ -33,8 +32,8 @@ export class AuthController {
 
   //로그인
   @UseGuards(LocalAuthGuard)
-  @HttpCode(200) // successfully logged in : 200
   @ApiOperation({ summary: "login" })
+  @ApiResponse(AuthResponse)
   @Post("login")
   async login(
     @Body(ValidationPipe) loginRequestDto: LoginRequestDto,

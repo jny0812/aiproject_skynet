@@ -3,7 +3,7 @@ import { S3Service } from 'src/common/s3/s3.service';
 import { UsersRepository } from './users.repository';
 import { myPageResponseDto,myPageBookmarkResponseDto } from './dto/users.response.dto';
 import { plainToClass } from 'class-transformer';
-import { MessageResponseDto } from 'src/app.dto';
+import { MessageResponseDto } from '../common/dto/message.dto';
 
 @Injectable()
 export class UsersService{

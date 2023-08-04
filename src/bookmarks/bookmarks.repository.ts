@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Bookmark } from "@prisma/client";
+import { Bookmark, Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma.service";
 import { ResponseBookmarkDto } from "./dto/bookmark.response.dto";
 
@@ -21,6 +21,8 @@ type QueriedBookmark = {
 export class BookmarksRepository {
   constructor(private prisma: PrismaService) {}
 
+  
+
   private toResponseBookmarkDto(
     bookmark: QueriedBookmark,
   ): ResponseBookmarkDto {
@@ -35,6 +37,33 @@ export class BookmarksRepository {
       createdAt: bookmark.createdAt,
     };
   }
+
+  //북마크 존재하면 status update | 없다면 Insert
+  // async upsertBookmark(userId:string, landmarkId:number) {
+  //   const result = await this.prisma.bookmark.upsert({
+  //     where: {
+  //       userId: userId,
+  //       landmarkId: landmarkId,
+  //     },
+  //     update: {
+  //       status: true,
+  //     },
+  //     create: {
+  //       userId: userId,
+  //       landmarkId: landmarkId,
+  //       status: true,
+  //     },
+
+  //   })
+
+  //   return result
+  //}
+
+  
+
+
+  
+
 
   async findBookmarkByUserId(userId: string) {
     const userExists = await this.prisma.user.findUnique({
@@ -99,6 +128,7 @@ export class BookmarksRepository {
     return this.toResponseBookmarkDto(createdBookmark);
   }
 
+  //북마크 불러오기
   async findManyByUser(
     userId: string,
   ): Promise<Record<string, ResponseBookmarkDto[]>> {

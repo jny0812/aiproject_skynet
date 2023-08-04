@@ -26,6 +26,7 @@ import { ResponseBookmarkDto, SiDoBookmarkListDto } from "./dto/bookmark.respons
 export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
 
+  //북마크 추가 버튼 (False > True)
   @Post("toggle")
   toggleBookmark(
     @Request() req: any,
@@ -51,15 +52,15 @@ export class BookmarksController {
   }
 
   //유저의 랜드마크 아이디로 조회
-  @Post()
-  async createBookmark(
-    @Request() req: any,
-    @Body(ValidationPipe) createBookmarkDto: CreateBookmarkDto,
-  ): Promise<ResponseBookmarkDto> {
-    const userId = req.user.id; // 로그인된 사용자의 ID
-    const landmarkId = createBookmarkDto.landmarkId;
-    return this.bookmarksService.create(userId, landmarkId);
-  }
+  // @Post()
+  // async createBookmark(
+  //   @Request() req: any,
+  //   @Body(ValidationPipe) createBookmarkDto: CreateBookmarkDto,
+  // ): Promise<ResponseBookmarkDto> {
+  //   const userId = req.user.id; // 로그인된 사용자의 ID
+  //   const landmarkId = createBookmarkDto.landmarkId;
+  //   return this.bookmarksService.create(userId, landmarkId);
+  // }
 
   @Delete(":landmarkId")
   async deleteBookmark(
