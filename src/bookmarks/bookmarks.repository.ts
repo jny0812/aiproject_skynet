@@ -59,12 +59,6 @@ export class BookmarksRepository {
   //   return result
   //}
 
-  
-
-
-  
-
-
   async findBookmarkByUserId(userId: string) {
     const userExists = await this.prisma.user.findUnique({
       where: { id: userId },

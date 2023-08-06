@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Body, UseGuards, Req, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Body, UseGuards, Req, Delete, InternalServerErrorException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersRequestDto } from './dto/users.request.dto';
 import { JwtAuthGuard } from 'src/auth/authentication/guards/jwt.guard';
@@ -7,6 +7,7 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import GetUserInfoResponse from 'src/docs/users/users.swagger';
 import { MessageResponse } from 'src/docs/global.swagger';
 import { MessageResponseDto } from '../common/dto/message.dto'
+import { User } from '@prisma/client';
 
 
 @UseGuards(JwtAuthGuard)
@@ -62,10 +63,25 @@ export class UsersController {
         }
         
 
-        const result = await this.usersService.deleteUser(req.id);
+        const result = await this.usersService.deleteUser(req.user.id);
 
         return result;
     }
+
+    //현재 로그인한 사용자 정보 가져오기
+    @Get('current')
+    @ApiOperation({summary: '현재 로그인한 사용자 정보 가져오기'})
+    async getCurrentUser(@Req() req: any): Promise<User| null> {
+        console.log(req)
+      try {
+        const currentUserInfo = await this.usersService.getCurrentUser(req.user.id);
+        return currentUserInfo;
+      } catch (error) {
+        // 여기서 오류를 처리하거나, 오류 응답을 반환할 수 있습니다.
+        throw new Error(error.message);
+      }
+    }
+    
 
 
 }
